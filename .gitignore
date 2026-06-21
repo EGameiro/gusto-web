@@ -3,6 +3,8 @@ bin/
 obj/
 *.user
 *.suo
+*.userosscache
+*.sln.docstates
 .vs/
 publish_output/
 dataprotection-keys/
