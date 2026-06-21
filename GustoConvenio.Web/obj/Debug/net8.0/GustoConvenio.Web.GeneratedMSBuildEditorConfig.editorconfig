@@ -1,0 +1,124 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetFrameworkIdentifier = .NETCoreApp
+build_property.TargetFrameworkVersion = v8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property.EntryPointFilePath = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = GustoConvenio.Web
+build_property.RootNamespace = GustoConvenio.Web
+build_property.ProjectDir = F:\claudeIA\Projeto GUSTO\gusto-WEB\GustoConvenio.Web\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = F:\claudeIA\Projeto GUSTO\gusto-WEB\GustoConvenio.Web
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Admin/Cardapio/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cQ2FyZGFwaW9cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Admin/Empresas/Criar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cRW1wcmVzYXNcQ3JpYXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Admin/Empresas/Editar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cRW1wcmVzYXNcRWRpdGFyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Admin/Empresas/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cRW1wcmVzYXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Admin/Pedidos/Detalhe.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cUGVkaWRvc1xEZXRhbGhlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Admin/Pedidos/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cUGVkaWRvc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Funcionarios/Criar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRnVuY2lvbmFyaW9zXENyaWFyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Funcionarios/Editar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRnVuY2lvbmFyaW9zXEVkaXRhci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Funcionarios/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRnVuY2lvbmFyaW9zXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Historico/Detalhes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSGlzdG9yaWNvXERldGFsaGVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Historico/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSGlzdG9yaWNvXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Login/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW5cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Login/Logout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW5cTG9nb3V0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Pedido/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGVkaWRvXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJpdmFjeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Shared/_LayoutLogin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9MYXlvdXRMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/SuperAdmin/Restaurantes/Criar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3VwZXJBZG1pblxSZXN0YXVyYW50ZXNcQ3JpYXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/SuperAdmin/Restaurantes/Editar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3VwZXJBZG1pblxSZXN0YXVyYW50ZXNcRWRpdGFyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/SuperAdmin/Restaurantes/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3VwZXJBZG1pblxSZXN0YXVyYW50ZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/claudeIA/Projeto GUSTO/gusto-WEB/GustoConvenio.Web/Pages/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-sr0f0fjvna

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GUSTO Convênio — Mockup de Telas</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 24px; color: #1a1a1a; }
+
+  h1 { font-size: 18px; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 20px; }
+
+  .nav-tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab-btn {
+    padding: 7px 16px; border-radius: 8px; border: 1px solid #ddd;
+    background: #fff; color: #666; font-size: 13px; cursor: pointer; transition: all 0.15s;
+  }
+  .tab-btn.active { background: #e8a020; color: #111; border-color: #e8a020; font-weight: 500; }
+  .tab-btn:hover:not(.active) { background: #f9f9f9; border-color: #bbb; }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .browser-bar {
+    background: #e8e8e8; border: 1px solid #ccc;
+    border-radius: 10px 10px 0 0;
+    padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+  }
+  .dots { display: flex; gap: 5px; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot:nth-child(1) { background: #ff5f57; }
+  .dot:nth-child(2) { background: #febc2e; }
+  .dot:nth-child(3) { background: #28c840; }
+  .url-bar {
+    flex: 1; background: #fff; border: 1px solid #ccc;
+    border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #555;
+  }
+  .browser-body {
+    border: 1px solid #ccc; border-top: none;
+    border-radius: 0 0 10px 10px;
+    background: #fff; overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+
+  .topbar {
+    background: #1a1a1a; padding: 12px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .topbar-brand { color: #e8a020; font-size: 14px; font-weight: 500; }
+  .topbar-user { color: #aaa; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+
+  .sidebar-layout { display: flex; min-height: 380px; }
+  .sidebar { width: 170px; background: #111; padding: 12px 0; flex-shrink: 0; }
+  .sidebar-item {
+    padding: 9px 16px; font-size: 12px; color: #888;
+    display: flex; align-items: center; gap: 8px; cursor: pointer;
+  }
+  .sidebar-item.active { color: #e8a020; background: #1a1200; border-left: 3px solid #e8a020; }
+  .sidebar-item i { font-size: 15px; }
+
+  .content { flex: 1; padding: 18px 22px; background: #fff; }
+
+  .page-title { font-size: 15px; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+  .page-sub { font-size: 12px; color: #888; margin-bottom: 16px; }
+
+  .form-input {
+    border: 1px solid #ddd; border-radius: 6px;
+    padding: 6px 10px; font-size: 12px; color: #333; background: #fff; width: 100%;
+  }
+
+  .btn { padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; border: 1px solid #ddd; background: #f5f5f5; color: #333; display: inline-flex; align-items: center; gap: 5px; }
+  .btn-primary { background: #e8a020; color: #111; border-color: #e8a020; font-weight: 500; }
+  .btn-sm { padding: 4px 10px; font-size: 11px; }
+
+  .table-wrap { border: 1px solid #e8e8e8; border-radius: 8px; overflow: hidden; }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .data-table th { background: #f7f7f7; padding: 8px 12px; text-align: left; color: #666; font-weight: 500; border-bottom: 1px solid #e8e8e8; }
+  .data-table td { padding: 8px 12px; border-bottom: 1px solid #f0f0f0; color: #333; vertical-align: middle; }
+  .data-table tr:last-child td { border-bottom: none; }
+
+  .badge { padding: 2px 9px; border-radius: 10px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; }
+  .badge-green { background: #e6f4ea; color: #1a6e2e; }
+  .badge-gray { background: #f0f0f0; color: #666; }
+  .badge-amber { background: #fdf3e3; color: #7a4f00; }
+  .badge-blue { background: #e8f0fe; color: #1a56a0; }
+
+  .grade-wrap { overflow-x: auto; margin-bottom: 14px; }
+  .grade-table { border-collapse: collapse; font-size: 12px; min-width: 100%; }
+  .grade-table th { padding: 8px 12px; background: #f7f7f7; color: #555; font-weight: 500; border: 1px solid #e8e8e8; white-space: nowrap; }
+  .grade-table td { border: 1px solid #e8e8e8; padding: 6px 10px; text-align: center; }
+  .grade-table .row-label { text-align: left; color: #333; background: #fafafa; white-space: nowrap; font-size: 12px; }
+  .grade-table .section-sep td { background: #f0f0f0; }
+  .grade-table .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; text-align: left; padding: 5px 12px; font-weight: 500; }
+
+  .cell-x {
+    width: 30px; height: 30px; border-radius: 6px; border: 1px solid #ddd;
+    background: #f9f9f9; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px; color: #999; transition: all 0.12s; font-weight: 500;
+    user-select: none;
+  }
+  .cell-x.marked { background: #e8a020; color: #111; border-color: #c88a10; }
+  .cell-x:hover:not(.marked) { background: #eee; border-color: #bbb; }
+
+  .corte-banner {
+    background: #fdf3e3; border: 1px solid #f0c060; border-radius: 8px;
+    padding: 9px 14px; font-size: 12px; color: #7a4f00;
+    display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+  }
+
+  .login-wrap {
+    display: flex; align-items: center; justify-content: center; min-height: 380px;
+    background: #1a1a1a;
+  }
+  .login-card {
+    background: #fff; border-radius: 12px; border: 1px solid #ddd;
+    padding: 30px 34px; width: 300px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  }
+  .login-logo { color: #e8a020; font-size: 17px; font-weight: 500; margin-bottom: 4px; }
+  .login-sub { font-size: 12px; color: #888; margin-bottom: 22px; }
+  .login-field { margin-bottom: 14px; }
+  .login-label { font-size: 11px; color: #666; margin-bottom: 5px; display: block; font-weight: 500; }
+  .login-input {
+    width: 100%; border: 1px solid #ddd; border-radius: 7px;
+    padding: 8px 11px; font-size: 13px; color: #333; background: #fff;
+    outline: none;
+  }
+  .login-input:focus { border-color: #e8a020; }
+  .login-btn {
+    width: 100%; background: #e8a020; color: #111; border: none; border-radius: 7px;
+    padding: 9px; font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 6px;
+  }
+  .login-btn:hover { background: #d4911c; }
+
+  .day-tabs { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap; }
+  .day-tab {
+    padding: 5px 12px; border-radius: 6px; border: 1px solid #ddd;
+    background: #f5f5f5; color: #666; font-size: 11px; cursor: pointer;
+  }
+  .day-tab.active { background: #e8a020; color: #111; border-color: #e8a020; font-weight: 500; }
+
+  .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .stat-card { background: #f7f7f7; border-radius: 8px; padding: 14px; border: 1px solid #ececec; }
+  .stat-val { font-size: 22px; font-weight: 500; color: #1a1a1a; }
+  .stat-lbl { font-size: 11px; color: #888; margin-top: 3px; }
+
+  .actions-row { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .col-title { font-size: 12px; font-weight: 500; color: #333; margin-bottom: 8px; }
+
+  .add-row { display: flex; gap: 6px; margin-top: 8px; }
+  .add-row .form-input { flex: 1; }
+</style>
+</head>
+<body>
+
+<h1>🍽️ GUSTO Convênio — Mockup de Telas</h1>
+<p class="subtitle">Clique nas abas para navegar entre as telas. Na grade de pedido, clique nas células para marcar/desmarcar.</p>
+
+<div class="nav-tabs">
+  <button class="tab-btn active" onclick="showScreen('login', this)">Login</button>
+  <button class="tab-btn" onclick="showScreen('funcionarios', this)">Funcionários</button>
+  <button class="tab-btn" onclick="showScreen('pedido', this)">Pedido do dia</button>
+  <button class="tab-btn" onclick="showScreen('admin-cardapio', this)">Admin — Cardápio</button>
+  <button class="tab-btn" onclick="showScreen('admin-empresas', this)">Admin — Empresas</button>
+  <button class="tab-btn" onclick="showScreen('historico', this)">Histórico</button>
+</div>
+
+<!-- ── LOGIN ─────────────────────────────────────────────────────────────── -->
+<div class="screen active" id="screen-login">
+  <div class="browser-bar">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="url-bar">gusto-convenio.smartasp.net/login</div>
+  </div>
+  <div class="browser-body">
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="login-logo">🍽️ GUSTO Convênio</div>
+        <div class="login-sub">Acesso exclusivo para empresas conveniadas</div>
+        <div class="login-field">
+          <label class="login-label">E-mail</label>
+          <input class="login-input" type="text" value="contato@empresaxyz.com.br">
+        </div>
+        <div class="login-field">
+          <label class="login-label">Senha</label>
+          <input class="login-input" type="password" value="12345678">
+        </div>
+        <button class="login-btn">Entrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FUNCIONÁRIOS ───────────────────────────────────────────────────────── -->
+<div class="screen" id="screen-funcionarios">
+  <div class="browser-bar">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="url-bar">gusto-convenio.smartasp.net/funcionarios</div>
+  </div>
+  <div class="browser-body">
+    <div class="topbar">
+      <span class="topbar-brand">🍽️ GUSTO Convênio</span>
+      <span class="topbar-user">Empresa XYZ &nbsp;|&nbsp; Sair</span>
+    </div>
+    <div class="sidebar-layout">
+      <div class="sidebar">
+        <div class="sidebar-item">Início</div>
+        <div class="sidebar-item active">Funcionários</div>
+        <div class="sidebar-item">Pedido do dia</div>
+        <div class="sidebar-item">Histórico</div>
+      </div>
+      <div class="content">
+        <div class="page-title">Funcionários</div>
+        <div class="page-sub">Gerencie as pessoas que participam dos pedidos diários</div>
+        <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+          <button class="btn btn-primary">+ Novo funcionário</button>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Nome</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody>
+              <tr><td>Ana Paula</td><td><span class="badge badge-green">Ativo</span></td><td><button class="btn btn-sm">Editar</button></td></tr>
+              <tr><td>João Carlos</td><td><span class="badge badge-green">Ativo</span></td><td><button class="btn btn-sm">Editar</button></td></tr>
+              <tr><td>Maria Fernanda</td><td><span class="badge badge-green">Ativo</span></td><td><button class="btn btn-sm">Editar</button></td></tr>
+              <tr><td>Carlos Eduardo</td><td><span class="badge badge-green">Ativo</span></td><td><button class="btn btn-sm">Editar</button></td></tr>
+              <tr><td>Luciana Souza</td><td><span class="badge badge-gray">Inativo</span></td><td><button class="btn btn-sm">Editar</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PEDIDO DO DIA ──────────────────────────────────────────────────────── -->
+<div class="screen" id="screen-pedido">
+  <div class="browser-bar">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="url-bar">gusto-convenio.smartasp.net/pedido</div>
+  </div>
+  <div class="browser-body">
+    <div class="topbar">
+      <span class="topbar-brand">🍽️ GUSTO Convênio</span>
+      <span class="topbar-user">Empresa XYZ &nbsp;|&nbsp; Sair</span>
+    </div>
+    <div class="sidebar-layout">
+      <div class="sidebar">
+        <div class="sidebar-item">Início</div>
+        <div class="sidebar-item">Funcionários</div>
+        <div class="sidebar-item active">Pedido do dia</div>
+        <div class="sidebar-item">Histórico</div>
+      </div>
+      <div class="content">
+        <div class="page-title">Pedido do dia — Quarta-feira, 18/06/2026</div>
+        <div class="page-sub">Marque o prato, tamanho e acompanhamentos de cada funcionário e clique em confirmar</div>
+        <div class="corte-banner">
+          ⏱ Prazo de envio: até as <strong style="margin: 0 3px;">10:00</strong> &nbsp;·&nbsp; Restam 1h 23min
+        </div>
+        <div class="grade-wrap">
+          <table class="grade-table">
+            <thead>
+              <tr>
+                <th style="min-width:130px; text-align:left;">  </th>
+                <th>Ana Paula</th>
+                <th>João Carlos</th>
+                <th>Maria F.</th>
+                <th>Carlos E.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="section-sep"><td class="section-label" colspan="5">Pratos</td></tr>
+              <tr>
+                <td class="row-label">Frango grelhado</td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+              </tr>
+              <tr>
+                <td class="row-label">Carne de panela</td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+              </tr>
+              <tr>
+                <td class="row-label">Feijoada completa</td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+              </tr>
+              <tr class="section-sep"><td class="section-label" colspan="5">Tamanho</td></tr>
+              <tr>
+                <td class="row-label">Mini</td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+              </tr>
+              <tr>
+                <td class="row-label">Normal</td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+              </tr>
+              <tr>
+                <td class="row-label">Executiva</td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+              </tr>
+              <tr class="section-sep"><td class="section-label" colspan="5">Acompanhamentos (até 2 por pessoa)</td></tr>
+              <tr>
+                <td class="row-label">Fritas</td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+              </tr>
+              <tr>
+                <td class="row-label">Farofa</td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+              </tr>
+              <tr>
+                <td class="row-label">Couve refogada</td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+              </tr>
+              <tr>
+                <td class="row-label">Arroz integral</td>
+                <td><div class="cell-x marked" onclick="toggleX(this)">X</div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+                <td><div class="cell-x" onclick="toggleX(this)"></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="actions-row">
+          <button class="btn">Limpar tudo</button>
+          <button class="btn btn-primary">Confirmar pedido (4 marmitas) →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADMIN CARDÁPIO ─────────────────────────────────────────────────────── -->
+<div class="screen" id="screen-admin-cardapio">
+  <div class="browser-bar">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="url-bar">gusto-convenio.smartasp.net/admin/cardapio</div>
+  </div>
+  <div class="browser-body">
+    <div class="topbar">
+      <span class="topbar-brand">🍽️ GUSTO Admin</span>
+      <span class="topbar-user">Administrador &nbsp;|&nbsp; Sair</span>
+    </div>
+    <div class="sidebar-layout">
+      <div class="sidebar">
+        <div class="sidebar-item">Empresas</div>
+        <div class="sidebar-item active">Cardápio</div>
+        <div class="sidebar-item">Horário de corte</div>
+        <div class="sidebar-item">Pedidos recebidos</div>
+      </div>
+      <div class="content">
+        <div class="page-title">Cardápio semanal</div>
+        <div class="page-sub">Configure os pratos e acompanhamentos disponíveis em cada dia da semana</div>
+        <div class="day-tabs">
+          <div class="day-tab">Segunda</div>
+          <div class="day-tab">Terça</div>
+          <div class="day-tab active">Quarta</div>
+          <div class="day-tab">Quinta</div>
+          <div class="day-tab">Sexta</div>
+          <div class="day-tab">Sábado</div>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="col-title">Pratos</div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Prato</th><th style="width:50px"></th></tr></thead>
+                <tbody>
+                  <tr><td>Frango grelhado</td><td><button class="btn btn-sm">Excluir</button></td></tr>
+                  <tr><td>Carne de panela</td><td><button class="btn btn-sm">Excluir</button></td></tr>
+                  <tr><td>Feijoada completa</td><td><button class="btn btn-sm">Excluir</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="add-row">
+              <input class="form-input" placeholder="Nome do prato">
+              <button class="btn btn-primary">+ Adicionar</button>
+            </div>
+          </div>
+          <div>
+            <div class="col-title">Acompanhamentos</div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Acompanhamento</th><th style="width:50px"></th></tr></thead>
+                <tbody>
+                  <tr><td>Fritas</td><td><button class="btn btn-sm">Excluir</button></td></tr>
+                  <tr><td>Farofa</td><td><button class="btn btn-sm">Excluir</button></td></tr>
+                  <tr><td>Couve refogada</td><td><button class="btn btn-sm">Excluir</button></td></tr>
+                  <tr><td>Arroz integral</td><td><button class="btn btn-sm">Excluir</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="add-row">
+              <input class="form-input" placeholder="Nome do acompanhamento">
+              <button class="btn btn-primary">+ Adicionar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADMIN EMPRESAS ─────────────────────────────────────────────────────── -->
+<div class="screen" id="screen-admin-empresas">
+  <div class="browser-bar">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="url-bar">gusto-convenio.smartasp.net/admin/empresas</div>
+  </div>
+  <div class="browser-body">
+    <div class="topbar">
+      <span class="topbar-brand">🍽️ GUSTO Admin</span>
+      <span class="topbar-user">Administrador &nbsp;|&nbsp; Sair</span>
+    </div>
+    <div class="sidebar-layout">
+      <div class="sidebar">
+        <div class="sidebar-item active">Empresas</div>
+        <div class="sidebar-item">Cardápio</div>
+        <div class="sidebar-item">Horário de corte</div>
+        <div class="sidebar-item">Pedidos recebidos</div>
+      </div>
+      <div class="content">
+        <div class="page-title">Empresas conveniadas</div>
+        <div class="page-sub">Gerencie acessos, horário de corte e status de cada empresa</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <span style="font-size:12px; color:#888;">3 empresas cadastradas</span>
+          <button class="btn btn-primary">+ Nova empresa</button>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>Empresa</th><th>E-mail de acesso</th><th>Corte</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Empresa XYZ</strong></td>
+                <td style="color:#888">contato@xyz.com.br</td>
+                <td><span class="badge badge-amber">10:00</span></td>
+                <td><span class="badge badge-green">Ativa</span></td>
+                <td><button class="btn btn-sm">Editar</button></td>
+              </tr>
+              <tr>
+                <td><strong>Construtora ABC</strong></td>
+                <td style="color:#888">rh@abc.com.br</td>
+                <td><span class="badge badge-amber">09:30</span></td>
+                <td><span class="badge badge-green">Ativa</span></td>
+                <td><button class="btn btn-sm">Editar</button></td>
+              </tr>
+              <tr>
+                <td><strong>Comércio Belo</strong></td>
+                <td style="color:#888">admin@belo.com.br</td>
+                <td><span class="badge badge-amber">10:00</span></td>
+                <td><span class="badge badge-gray">Inativa</span></td>
+                <td><button class="btn btn-sm">Editar</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── HISTÓRICO ──────────────────────────────────────────────────────────── -->
+<div class="screen" id="screen-historico">
+  <div class="browser-bar">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="url-bar">gusto-convenio.smartasp.net/historico</div>
+  </div>
+  <div class="browser-body">
+    <div class="topbar">
+      <span class="topbar-brand">🍽️ GUSTO Convênio</span>
+      <span class="topbar-user">Empresa XYZ &nbsp;|&nbsp; Sair</span>
+    </div>
+    <div class="sidebar-layout">
+      <div class="sidebar">
+        <div class="sidebar-item">Início</div>
+        <div class="sidebar-item">Funcionários</div>
+        <div class="sidebar-item">Pedido do dia</div>
+        <div class="sidebar-item active">Histórico</div>
+      </div>
+      <div class="content">
+        <div class="page-title">Histórico de pedidos</div>
+        <div class="page-sub">Pedidos enviados pela Empresa XYZ</div>
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-val">47</div><div class="stat-lbl">Pedidos este mês</div></div>
+          <div class="stat-card"><div class="stat-val">183</div><div class="stat-lbl">Marmitas este mês</div></div>
+          <div class="stat-card"><div class="stat-val">R$ 4.320</div><div class="stat-lbl">Total este mês</div></div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Data</th><th>Marmitas</th><th>Total</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>18/06/2026</td><td>4</td><td>R$ 97,60</td><td><span class="badge badge-green">Entregue</span></td><td><button class="btn btn-sm">Ver detalhes</button></td></tr>
+              <tr><td>17/06/2026</td><td>4</td><td>R$ 97,60</td><td><span class="badge badge-green">Entregue</span></td><td><button class="btn btn-sm">Ver detalhes</button></td></tr>
+              <tr><td>16/06/2026</td><td>3</td><td>R$ 71,70</td><td><span class="badge badge-green">Entregue</span></td><td><button class="btn btn-sm">Ver detalhes</button></td></tr>
+              <tr><td>13/06/2026</td><td>4</td><td>R$ 97,60</td><td><span class="badge badge-green">Entregue</span></td><td><button class="btn btn-sm">Ver detalhes</button></td></tr>
+              <tr><td>12/06/2026</td><td>5</td><td>R$ 122,50</td><td><span class="badge badge-green">Entregue</span></td><td><button class="btn btn-sm">Ver detalhes</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showScreen(name, btn) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function toggleX(el) {
+    el.classList.toggle('marked');
+    el.textContent = el.classList.contains('marked') ? 'X' : '';
+  }
+</script>
+</body>
+</html>

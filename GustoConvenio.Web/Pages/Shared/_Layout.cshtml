@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — GUSTO Convênio</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+
+@{
+    var page     = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
+    var isAdmin      = User.FindFirst("IsAdmin")?.Value == "true";
+    var isSuperAdmin = User.FindFirst("IsSuperAdmin")?.Value == "true";
+    var empresa      = User.FindFirst("EmpresaNome")?.Value ?? "";
+    var nomeExib     = isSuperAdmin ? "Super Admin" : (isAdmin ? "Administrador" : empresa);
+}
+
+<nav class="topbar">
+    <a class="topbar-brand" href="@(isSuperAdmin ? "/SuperAdmin/Restaurantes" : (isAdmin ? "/Admin/Pedidos" : "/Pedido"))">🍽️ GUSTO Convênio</a>
+    <span class="topbar-user">
+        @nomeExib &nbsp;|&nbsp;
+        <a href="/Login/Logout">Sair</a>
+    </span>
+</nav>
+
+<div class="app-layout">
+
+    <nav class="sidebar">
+        @if (isSuperAdmin)
+        {
+            <span class="sidebar-section">Super Admin</span>
+            <a class="sidebar-item @(page.StartsWith("/SuperAdmin/Restaurantes") ? "active" : "")" href="/SuperAdmin/Restaurantes">🏪 Restaurantes</a>
+        }
+        else if (isAdmin)
+        {
+            <span class="sidebar-section">Administração</span>
+            <a class="sidebar-item @(page.StartsWith("/Admin/Pedidos")  ? "active" : "")" href="/Admin/Pedidos">📋 Pedidos do dia</a>
+            <a class="sidebar-item @(page.StartsWith("/Admin/Empresas") ? "active" : "")" href="/Admin/Empresas">🏢 Empresas</a>
+            <a class="sidebar-item @(page.StartsWith("/Admin/Cardapio") ? "active" : "")" href="/Admin/Cardapio">🥘 Cardápio</a>
+        }
+        else
+        {
+            <a class="sidebar-item @(page.StartsWith("/Pedido")       ? "active" : "")" href="/Pedido">🍱 Pedido do dia</a>
+            <a class="sidebar-item @(page.StartsWith("/Funcionarios") ? "active" : "")" href="/Funcionarios">👥 Funcionários</a>
+            <a class="sidebar-item @(page.StartsWith("/Historico")    ? "active" : "")" href="/Historico">📅 Histórico</a>
+        }
+    </nav>
+
+    <main class="content">
+        @if (TempData["Sucesso"] is string sucesso)
+        {
+            <div class="alert alert-success">✓ @sucesso</div>
+        }
+        @if (TempData["Erro"] is string erro)
+        {
+            <div class="alert alert-danger">⚠ @erro</div>
+        }
+        @RenderBody()
+    </main>
+
+</div>
+
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

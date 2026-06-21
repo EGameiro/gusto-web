@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "mMC6PLCg6xA=",
+  "success": true,
+  "projectFilePath": "F:\\claudeIA\\Projeto GUSTO\\gusto-WEB\\HashUtil\\HashUtil.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\digiplay\\.nuget\\packages\\bcrypt.net-next\\4.2.0\\bcrypt.net-next.4.2.0.nupkg.sha512"
+  ],
+  "logs": []
+}

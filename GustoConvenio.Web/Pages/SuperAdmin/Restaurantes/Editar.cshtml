@@ -1,0 +1,52 @@
+@page "{id:int}"
+@model GustoConvenio.Web.Pages.SuperAdmin.Restaurantes.EditarModel
+@{
+    ViewData["Title"] = "Editar Restaurante";
+}
+
+<div class="page-title">Editar Restaurante</div>
+<div class="page-sub">Atualize os dados do restaurante</div>
+
+<div class="form-card">
+    <form method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Nome *</label>
+                <input asp-for="Nome" class="form-control" />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Slug *</label>
+                <input asp-for="Slug" class="form-control" />
+                <span asp-validation-for="Slug" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Telefone</label>
+                <input asp-for="Telefone" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input asp-for="Email" type="email" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Endereço</label>
+            <input asp-for="Endereco" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label class="form-label">Status</label>
+            <select asp-for="Ativo" class="form-control" style="max-width:200px;">
+                <option value="true">Ativo</option>
+                <option value="false">Inativo</option>
+            </select>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:8px;">
+            <button type="submit" class="btn btn-primary">Salvar alterações</button>
+            <a href="/SuperAdmin/Restaurantes" class="btn">Cancelar</a>
+        </div>
+    </form>
+</div>

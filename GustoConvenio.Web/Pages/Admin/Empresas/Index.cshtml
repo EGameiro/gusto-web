@@ -1,0 +1,58 @@
+@page
+@model GustoConvenio.Web.Pages.Admin.Empresas.IndexModel
+@{
+    ViewData["Title"] = "Empresas conveniadas";
+}
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+    <div class="page-title">Empresas conveniadas</div>
+    <a href="/Admin/Empresas/Criar" class="btn btn-primary">+ Nova empresa</a>
+</div>
+<div class="page-sub">Gerencie as empresas com acesso ao portal</div>
+
+<div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Empresa</th>
+                <th>WhatsApp</th>
+                <th>E-mail</th>
+                <th>Corte</th>
+                <th>Status</th>
+                <th style="width:110px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var e in Model.Empresas)
+            {
+                <tr>
+                    <td><strong>@e.NomeEmpresa</strong></td>
+                    <td>@(e.NumeroWhatsapp ?? "—")</td>
+                    <td>@(e.Email ?? "—")</td>
+                    <td>@e.HorarioCorte.ToString("HH:mm")</td>
+                    <td>
+                        @if (e.Ativo)
+                        {
+                            <span class="badge badge-green">Ativa</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-gray">Inativa</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="/Admin/Empresas/Editar/@e.Id" class="btn btn-sm">Editar</a>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Empresas.Any())
+            {
+                <tr>
+                    <td colspan="6" style="text-align:center; color:#888; padding:24px;">
+                        Nenhuma empresa cadastrada.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

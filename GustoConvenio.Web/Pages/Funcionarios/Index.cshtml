@@ -1,0 +1,49 @@
+@page
+@model GustoConvenio.Web.Pages.Funcionarios.IndexModel
+@{
+    ViewData["Title"] = "Funcionários";
+}
+
+<div class="page-title">Funcionários</div>
+<div class="page-sub">Gerencie as pessoas que participam dos pedidos diários</div>
+
+<div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
+    <a href="/Funcionarios/Criar" class="btn btn-primary">+ Novo funcionário</a>
+</div>
+
+<div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Status</th>
+                <th style="width:100px"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var f in Model.Funcionarios)
+            {
+                <tr>
+                    <td>@f.Nome</td>
+                    <td>
+                        @if (f.Ativo)
+                        {
+                            <span class="badge badge-green">Ativo</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-gray">Inativo</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="/Funcionarios/Editar/@f.Id" class="btn btn-sm">Editar</a>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Funcionarios.Any())
+            {
+                <tr><td colspan="3" style="text-align:center; color:#888; padding:20px;">Nenhum funcionário cadastrado.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

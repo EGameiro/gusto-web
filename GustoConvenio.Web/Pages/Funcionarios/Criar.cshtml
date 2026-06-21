@@ -1,0 +1,21 @@
+@page
+@model GustoConvenio.Web.Pages.Funcionarios.CriarModel
+@{
+    ViewData["Title"] = "Novo Funcionário";
+}
+
+<div class="page-title">Novo Funcionário</div>
+<div class="page-sub">Preencha o nome para cadastrar</div>
+
+<form method="post" style="max-width:420px;">
+    <div class="form-group">
+        <label class="form-label">Nome</label>
+        <input asp-for="Nome" class="form-control" placeholder="Nome completo" />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+
+    <div style="display:flex; gap:8px; margin-top:8px;">
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <a href="/Funcionarios" class="btn">Cancelar</a>
+    </div>
+</form>

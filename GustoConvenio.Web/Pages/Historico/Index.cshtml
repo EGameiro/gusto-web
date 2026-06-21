@@ -1,0 +1,98 @@
+@page
+@model GustoConvenio.Web.Pages.Historico.IndexModel
+@{
+    ViewData["Title"] = "Histórico";
+    var meses = new[] { "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+                        "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro" };
+}
+
+<div class="page-title">Histórico de pedidos</div>
+<div class="page-sub">Pedidos enviados pela sua empresa</div>
+
+<!-- Filtro de mês/ano -->
+<form method="get" style="display:flex; gap:10px; align-items:flex-end; margin-bottom:20px; flex-wrap:wrap;">
+    <div>
+        <label class="form-label">Mês</label>
+        <select name="mes" class="form-control" style="width:150px;">
+            @for (int m = 1; m <= 12; m++)
+            {
+                <option value="@m" selected="@(m == Model.Mes)">@meses[m - 1]</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label class="form-label">Ano</label>
+        <select name="ano" class="form-control" style="width:100px;">
+            @for (int a = DateTime.Today.Year; a >= DateTime.Today.Year - 2; a--)
+            {
+                <option value="@a" selected="@(a == Model.Ano)">@a</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+</form>
+
+<!-- Totalizadores -->
+<div class="stat-row" style="margin-bottom:20px;">
+    <div class="stat-card">
+        <div class="stat-val">@Model.TotalPedidos</div>
+        <div class="stat-lbl">Pedidos no mês</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-val">@Model.TotalMarmitas</div>
+        <div class="stat-lbl">Marmitas no mês</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-val">R$ @Model.TotalValor.ToString("N2")</div>
+        <div class="stat-lbl">Total no mês</div>
+    </div>
+</div>
+
+<!-- Tabela -->
+<div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Marmitas</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th style="width:110px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model.Pedidos)
+            {
+                <tr>
+                    <td>@p.DataPedido.ToString("dd/MM/yyyy")</td>
+                    <td>@p.TotalMarmitas</td>
+                    <td>R$ @p.TotalValor.ToString("N2")</td>
+                    <td>
+                        @{
+                            var (cls, txt) = p.Status switch
+                            {
+                                "pendente"  => ("badge-amber", "Pendente"),
+                                "preparo"   => ("badge-blue",  "Em preparo"),
+                                "saiu"      => ("badge-amber", "Saiu p/ entrega"),
+                                "entregue"  => ("badge-green", "Entregue"),
+                                _           => ("badge-gray",  p.Status)
+                            };
+                        }
+                        <span class="badge @cls">@txt</span>
+                    </td>
+                    <td>
+                        <a href="/Historico/Detalhes/@p.Id" class="btn btn-sm">Ver detalhes</a>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Pedidos.Any())
+            {
+                <tr>
+                    <td colspan="5" style="text-align:center; color:#888; padding:24px;">
+                        Nenhum pedido encontrado para @meses[Model.Mes - 1]/@Model.Ano.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

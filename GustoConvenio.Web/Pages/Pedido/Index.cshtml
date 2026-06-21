@@ -1,0 +1,287 @@
+@page
+@model GustoConvenio.Web.Pages.Pedido.IndexModel
+@{
+    ViewData["Title"] = "Pedido do dia";
+    var tamanhos = new[] { "Mini", "Normal", "Executiva", "Churrasco" };
+    var corte    = Model.HorarioCorte.ToString("HH:mm");
+}
+
+<div class="page-title">Pedido do dia</div>
+<div class="page-sub">@Model.DataHoje — marque prato, tamanho e acompanhamentos de cada funcionário</div>
+
+@if (Model.JaPediuHoje)
+{
+    <div class="alert alert-success" style="font-size:14px;">
+        ✓ Você já tem pedidos hoje. <a href="/Historico">Ver histórico</a>.
+    </div>
+}
+
+@if (!Model.Funcionarios.Any())
+{
+    <div class="alert alert-danger">
+        Nenhum funcionário ativo. <a href="/Funcionarios/Criar">Cadastre funcionários</a> para montar o pedido.
+    </div>
+    return;
+}
+
+@if (!Model.Pratos.Any())
+{
+    <div class="alert alert-danger">
+        Cardápio de hoje não configurado. Aguarde o administrador do GUSTO.
+    </div>
+    return;
+}
+
+<!-- Banner de contagem regressiva -->
+<div class="corte-banner" id="banner-corte">
+    ⏱ Prazo de envio: até as <strong id="txt-corte">@corte</strong>
+    &nbsp;·&nbsp; <span id="txt-restam">calculando...</span>
+</div>
+
+<form method="post" id="form-pedido">
+    <input type="hidden" name="PedidoJson" id="pedido-json" />
+    @Html.AntiForgeryToken()
+
+    <div style="overflow-x:auto; margin-bottom:16px;">
+        <table class="grade-table" id="grade">
+            <thead>
+                <tr>
+                    <th style="min-width:160px; text-align:left;"></th>
+                    @foreach (var f in Model.Funcionarios)
+                    {
+                        <th data-func-id="@f.Id" data-func-nome="@f.Nome">@f.Nome</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Pratos -->
+                <tr class="section-sep">
+                    <td class="section-label" colspan="@(Model.Funcionarios.Count + 1)">Pratos</td>
+                </tr>
+                @foreach (var p in Model.Pratos)
+                {
+                    <tr>
+                        <td class="row-label">@p.Nome</td>
+                        @foreach (var f in Model.Funcionarios)
+                        {
+                            <td>
+                                <div class="cell-x" data-tipo="prato" data-func="@f.Id" data-val="@p.Nome"
+                                     onclick="toggleCell(this)"></div>
+                            </td>
+                        }
+                    </tr>
+                }
+
+                <!-- Tamanho -->
+                <tr class="section-sep">
+                    <td class="section-label" colspan="@(Model.Funcionarios.Count + 1)">Tamanho</td>
+                </tr>
+                @foreach (var t in tamanhos)
+                {
+                    <tr>
+                        <td class="row-label">@t</td>
+                        @foreach (var f in Model.Funcionarios)
+                        {
+                            <td>
+                                <div class="cell-x" data-tipo="tamanho" data-func="@f.Id" data-val="@t"
+                                     onclick="toggleCell(this)"></div>
+                            </td>
+                        }
+                    </tr>
+                }
+
+                <!-- Acompanhamentos -->
+                <tr class="section-sep">
+                    <td class="section-label" colspan="@(Model.Funcionarios.Count + 1)">Acompanhamentos (até 2 por pessoa)</td>
+                </tr>
+                @foreach (var a in Model.Acompanhamentos)
+                {
+                    <tr>
+                        <td class="row-label">@a.Nome</td>
+                        @foreach (var f in Model.Funcionarios)
+                        {
+                            <td>
+                                <div class="cell-x" data-tipo="acomp" data-func="@f.Id" data-val="@a.Nome"
+                                     onclick="toggleCell(this)"></div>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:10px; align-items:center;">
+        <span id="txt-contagem" style="font-size:13px; color:#888;"></span>
+        <button type="button" class="btn" onclick="limparTudo()">Limpar tudo</button>
+        <button type="submit" class="btn btn-primary" id="btn-confirmar" onclick="return prepararEnvio()">
+            Confirmar pedido →
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+<style>
+.corte-banner {
+    background: #fdf3e3; border: 1px solid #f0c060; border-radius: 8px;
+    padding: 10px 16px; font-size: 13px; color: #7a4f00;
+    display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+}
+.corte-banner.bloqueado { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+
+.grade-table { border-collapse: collapse; font-size: 12px; }
+.grade-table th { padding: 8px 12px; background: #f7f7f7; color: #555; font-weight: 600; border: 1px solid #e8e8e8; white-space: nowrap; text-align: center; }
+.grade-table td { border: 1px solid #e8e8e8; padding: 6px 10px; text-align: center; }
+.grade-table .row-label { text-align: left; background: #fafafa; white-space: nowrap; padding: 6px 14px; color: #333; }
+.grade-table .section-sep td { background: #f0f0f0; }
+.grade-table .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; text-align: left !important; padding: 5px 14px; font-weight: 600; }
+
+.cell-x {
+    width: 32px; height: 32px; border-radius: 6px; border: 1px solid #ddd;
+    background: #f9f9f9; cursor: pointer; display: inline-flex;
+    align-items: center; justify-content: center; font-size: 15px;
+    font-weight: 700; color: transparent; transition: all 0.1s; user-select: none;
+    margin: auto;
+}
+.cell-x.marcado { background: #e8a020; color: #111; border-color: #c88a10; }
+.cell-x:hover:not(.marcado):not(.bloqueado) { background: #eee; border-color: #bbb; }
+.cell-x.bloqueado { cursor: not-allowed; opacity: 0.5; }
+</style>
+
+<script>
+const CORTE_STR = "@corte";
+const [ch, cm] = CORTE_STR.split(":").map(Number);
+
+function tempoRestante() {
+    const agora = new Date();
+    const corte = new Date(agora);
+    corte.setHours(ch, cm, 0, 0);
+    return corte - agora; // ms
+}
+
+function formatarTempo(ms) {
+    if (ms <= 0) return "encerrado";
+    const h = Math.floor(ms / 3600000);
+    const m = Math.floor((ms % 3600000) / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    return h > 0 ? `${h}h ${m}min` : `${m}min ${s}s`;
+}
+
+function atualizarBanner() {
+    const ms = tempoRestante();
+    const banner = document.getElementById("banner-corte");
+    const txtRestam = document.getElementById("txt-restam");
+    const btn = document.getElementById("btn-confirmar");
+    const cells = document.querySelectorAll(".cell-x");
+
+    if (ms <= 0) {
+        txtRestam.textContent = "prazo encerrado";
+        banner.classList.add("bloqueado");
+        btn.disabled = true;
+        cells.forEach(c => { c.classList.add("bloqueado"); c.onclick = null; });
+    } else {
+        txtRestam.textContent = `Restam ${formatarTempo(ms)}`;
+        banner.classList.remove("bloqueado");
+    }
+}
+
+// Tick a cada segundo
+setInterval(atualizarBanner, 1000);
+atualizarBanner();
+
+// ── Grade ────────────────────────────────────────────────
+function toggleCell(el) {
+    if (el.classList.contains("bloqueado")) return;
+
+    const tipo  = el.dataset.tipo;
+    const funcId = el.dataset.func;
+    const val   = el.dataset.val;
+    const marcado = el.classList.contains("marcado");
+
+    if (marcado) {
+        el.classList.remove("marcado");
+        el.textContent = "";
+        atualizarContagem();
+        return;
+    }
+
+    // Prato e tamanho: apenas 1 por funcionário
+    if (tipo === "prato" || tipo === "tamanho") {
+        document.querySelectorAll(`.cell-x[data-tipo="${tipo}"][data-func="${funcId}"]`)
+            .forEach(c => { c.classList.remove("marcado"); c.textContent = ""; });
+    }
+
+    // Acompanhamento: máximo 2
+    if (tipo === "acomp") {
+        const marcados = document.querySelectorAll(`.cell-x[data-tipo="acomp"][data-func="${funcId}"].marcado`);
+        if (marcados.length >= 2) {
+            alert("Máximo de 2 acompanhamentos por pessoa.");
+            return;
+        }
+    }
+
+    el.classList.add("marcado");
+    el.textContent = "✕";
+    atualizarContagem();
+}
+
+function atualizarContagem() {
+    const total = document.querySelectorAll(".cell-x[data-tipo='prato'].marcado").length;
+    document.getElementById("txt-contagem").textContent =
+        total > 0 ? `${total} marmita(s) selecionada(s)` : "";
+}
+
+function limparTudo() {
+    document.querySelectorAll(".cell-x.marcado").forEach(c => {
+        c.classList.remove("marcado");
+        c.textContent = "";
+    });
+    atualizarContagem();
+}
+
+function prepararEnvio() {
+    // Monta lista de funcionários a partir do cabeçalho
+    const headers = document.querySelectorAll("thead th[data-func-id]");
+    const itens = [];
+    let erros = [];
+
+    headers.forEach(th => {
+        const funcId   = th.dataset.funcId;
+        const funcNome = th.dataset.funcNome;
+
+        const prato   = document.querySelector(`.cell-x[data-tipo="prato"][data-func="${funcId}"].marcado`)?.dataset.val;
+        const tamanho = document.querySelector(`.cell-x[data-tipo="tamanho"][data-func="${funcId}"].marcado`)?.dataset.val;
+
+        // Ignora funcionários sem nenhuma seleção
+        if (!prato && !tamanho) return;
+
+        if (!prato)   erros.push(`${funcNome}: selecione o prato.`);
+        if (!tamanho) erros.push(`${funcNome}: selecione o tamanho.`);
+
+        const acomps = [...document.querySelectorAll(`.cell-x[data-tipo="acomp"][data-func="${funcId}"].marcado`)]
+            .map(c => c.dataset.val);
+
+        itens.push({
+            funcionarioId: parseInt(funcId),
+            nome:   funcNome,
+            prato:  prato  ?? "",
+            tamanho: tamanho ?? "",
+            acomp1: acomps[0] ?? null,
+            acomp2: acomps[1] ?? null,
+        });
+    });
+
+    if (itens.length === 0) {
+        alert("Selecione pelo menos 1 marmita antes de confirmar.");
+        return false;
+    }
+    if (erros.length > 0) {
+        alert("Corrija os itens abaixo:\n\n" + erros.join("\n"));
+        return false;
+    }
+
+    document.getElementById("pedido-json").value = JSON.stringify(itens);
+    return true;
+}
+</script>
+}

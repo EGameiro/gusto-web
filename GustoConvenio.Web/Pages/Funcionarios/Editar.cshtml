@@ -1,0 +1,31 @@
+@page "{id:int}"
+@model GustoConvenio.Web.Pages.Funcionarios.EditarModel
+@{
+    ViewData["Title"] = "Editar Funcionário";
+}
+
+<div class="page-title">Editar Funcionário</div>
+<div class="page-sub">Altere o nome ou o status do funcionário</div>
+
+<form method="post" style="max-width:420px;">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label class="form-label">Nome</label>
+        <input asp-for="Nome" class="form-control" />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">Status</label>
+        <select asp-for="Ativo" class="form-control">
+            <option value="true">Ativo</option>
+            <option value="false">Inativo</option>
+        </select>
+    </div>
+
+    <div style="display:flex; gap:8px; margin-top:8px;">
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <a href="/Funcionarios" class="btn">Cancelar</a>
+    </div>
+</form>

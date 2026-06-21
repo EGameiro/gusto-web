@@ -1,0 +1,17 @@
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\HashUtil.csproj.AssemblyReference.cache
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\HashUtil.GeneratedMSBuildEditorConfig.editorconfig
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\HashUtil.AssemblyInfoInputs.cache
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\HashUtil.AssemblyInfo.cs
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\HashUtil.csproj.CoreCompileInputs.cache
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\bin\Debug\net10.0\HashUtil.exe
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\bin\Debug\net10.0\HashUtil.deps.json
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\bin\Debug\net10.0\HashUtil.runtimeconfig.json
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\bin\Debug\net10.0\HashUtil.dll
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\bin\Debug\net10.0\HashUtil.pdb
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\bin\Debug\net10.0\BCrypt-Net-Next.dll
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\HashUtil.csproj.Up2Date
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\HashUtil.dll
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\refint\HashUtil.dll
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\HashUtil.pdb
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\HashUtil.genruntimeconfig.cache
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\ref\HashUtil.dll

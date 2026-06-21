@@ -1,0 +1,54 @@
+@page "{id:int}"
+@model GustoConvenio.Web.Pages.Admin.Empresas.EditarModel
+@{
+    ViewData["Title"] = "Editar empresa";
+}
+
+<div class="page-title">Editar empresa</div>
+<div class="page-sub">Atualize os dados da empresa conveniada</div>
+
+<div class="form-card">
+    <form method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label class="form-label">Nome da empresa *</label>
+            <input asp-for="NomeEmpresa" class="form-control" />
+            <span asp-validation-for="NomeEmpresa" class="text-danger"></span>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">WhatsApp (número convênio)</label>
+                <input asp-for="NumeroWhatsapp" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">E-mail de acesso</label>
+                <input asp-for="Email" type="email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Nova senha <small style="color:#888;">(deixe em branco para manter)</small></label>
+                <input asp-for="NovaSenha" type="password" class="form-control" />
+                <span asp-validation-for="NovaSenha" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Horário de corte</label>
+                <input asp-for="HorarioCorte" type="time" class="form-control" />
+                <span asp-validation-for="HorarioCorte" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Status</label>
+            <select asp-for="Ativo" class="form-control" style="max-width:200px;">
+                <option value="true">Ativa</option>
+                <option value="false">Inativa</option>
+            </select>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:8px;">
+            <button type="submit" class="btn btn-primary">Salvar alterações</button>
+            <a href="/Admin/Empresas" class="btn">Cancelar</a>
+        </div>
+    </form>
+</div>

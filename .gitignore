@@ -1,0 +1,14 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+publish_output/
+dataprotection-keys/
+
+## Publicação
+**/publish/
+
+## Secrets (nunca commitar)
+appsettings.Production.json

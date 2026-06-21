@@ -1,0 +1,55 @@
+@page
+@model GustoConvenio.Web.Pages.SuperAdmin.Restaurantes.IndexModel
+@{
+    ViewData["Title"] = "Restaurantes";
+}
+
+<div class="page-title">Restaurantes</div>
+<div class="page-sub">Gerencie todos os restaurantes do sistema</div>
+
+@if (TempData["Sucesso"] is string s)
+{
+    <div class="alert alert-success">@s</div>
+}
+
+<div style="margin-bottom:16px;">
+    <a href="/SuperAdmin/Restaurantes/Criar" class="btn btn-primary">+ Novo restaurante</a>
+</div>
+
+<div class="table-card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Slug</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model.Restaurantes)
+            {
+                <tr>
+                    <td><strong>@r.Nome</strong></td>
+                    <td><code>@r.Slug</code></td>
+                    <td>@r.Email</td>
+                    <td>@r.Telefone</td>
+                    <td>
+                        <span class="badge @(r.Ativo ? "badge-success" : "badge-danger")">
+                            @(r.Ativo ? "Ativo" : "Inativo")
+                        </span>
+                    </td>
+                    <td>
+                        <a href="/SuperAdmin/Restaurantes/Editar/@r.Id" class="btn btn-sm">Editar</a>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Restaurantes.Any())
+            {
+                <tr><td colspan="6" style="text-align:center; color:#888;">Nenhum restaurante cadastrado.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

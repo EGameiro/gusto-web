@@ -1,0 +1,59 @@
+@page "{id:int}"
+@model GustoConvenio.Web.Pages.Admin.Pedidos.DetalheModel
+@{
+    ViewData["Title"] = "Detalhe do pedido";
+    var (cls, txt) = Model.Resumo.Status switch
+    {
+        "pendente" => ("badge-amber", "Pendente"),
+        "preparo"  => ("badge-blue",  "Em preparo"),
+        "saiu"     => ("badge-amber", "Saiu p/ entrega"),
+        "entregue" => ("badge-green", "Entregue"),
+        _          => ("badge-gray",  Model.Resumo.Status)
+    };
+}
+
+<div style="display:flex; align-items:center; gap:12px; margin-bottom:4px;">
+    <div class="page-title" style="margin:0;">Pedido #@Model.Resumo.Id — @Model.NomeEmpresa</div>
+    <span class="badge @cls">@txt</span>
+</div>
+<div class="page-sub">
+    @Model.Resumo.DataPedido.ToString("dd/MM/yyyy") &nbsp;·&nbsp;
+    @Model.Resumo.TotalMarmitas marmita(s) &nbsp;·&nbsp;
+    Total: R$ @Model.Resumo.TotalValor.ToString("N2")
+</div>
+
+<div class="table-wrap" style="margin-bottom:16px;">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Funcionário</th>
+                <th>Prato</th>
+                <th>Tamanho</th>
+                <th>Acompanhamentos</th>
+                <th style="text-align:right;">Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Itens)
+            {
+                var acomps = new[] { item.Acomp1, item.Acomp2 }.Where(a => !string.IsNullOrEmpty(a));
+                var preco  = GustoConvenio.Web.Models.Tamanhos.Precos.GetValueOrDefault(item.Tamanho ?? "", 0m);
+                <tr>
+                    <td><strong>@item.Nome</strong></td>
+                    <td>@item.Prato</td>
+                    <td>@item.Tamanho</td>
+                    <td>@(acomps.Any() ? string.Join(" + ", acomps) : "—")</td>
+                    <td style="text-align:right;">R$ @preco.ToString("N2")</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr style="background:#f7f7f7; font-weight:600;">
+                <td colspan="4" style="text-align:right; padding:10px 14px;">Total</td>
+                <td style="text-align:right; padding:10px 14px;">R$ @Model.Resumo.TotalValor.ToString("N2")</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<a href="/Admin/Pedidos" class="btn">← Voltar aos pedidos</a>

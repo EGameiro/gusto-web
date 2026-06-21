@@ -1,0 +1,61 @@
+@page
+@model GustoConvenio.Web.Pages.Admin.Pedidos.IndexModel
+@{
+    ViewData["Title"] = "Pedidos de hoje";
+}
+
+<div class="page-title">Pedidos de hoje</div>
+<div class="page-sub">@Model.DataHoje</div>
+
+<div class="stat-row" style="margin-bottom:20px;">
+    <div class="stat-card">
+        <div class="stat-val">@Model.TotalEmpresas</div>
+        <div class="stat-lbl">Empresas que pediram</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-val">@Model.TotalMarmitas</div>
+        <div class="stat-lbl">Total de marmitas</div>
+    </div>
+</div>
+
+<div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Empresa</th>
+                <th>Marmitas</th>
+                <th>Status</th>
+                <th style="width:110px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model.Pedidos)
+            {
+                var (cls, txt) = p.Status switch
+                {
+                    "pendente" => ("badge-amber", "Pendente"),
+                    "preparo"  => ("badge-blue",  "Em preparo"),
+                    "saiu"     => ("badge-amber", "Saiu p/ entrega"),
+                    "entregue" => ("badge-green", "Entregue"),
+                    _          => ("badge-gray",  p.Status)
+                };
+                <tr>
+                    <td><strong>@p.NomeEmpresa</strong></td>
+                    <td>@p.TotalMarmitas</td>
+                    <td><span class="badge @cls">@txt</span></td>
+                    <td>
+                        <a href="/Admin/Pedidos/Detalhe/@p.PedidoId" class="btn btn-sm">Ver detalhe</a>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Pedidos.Any())
+            {
+                <tr>
+                    <td colspan="4" style="text-align:center; color:#888; padding:28px;">
+                        Nenhuma empresa enviou pedido hoje ainda.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
