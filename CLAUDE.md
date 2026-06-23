@@ -299,7 +299,8 @@ Empresa loga → claims EmpresaId + EmpresaNome injetados no cookie
 ## Pendências
 
 ### Técnicas
-- [ ] **Tamanhos e preços do cardápio WhatsApp estão hardcoded** em `gusto-agent/services/cardapio.py` (Mini R$21,90, Normal R$23,90, Executiva R$24,90, Churrasco R$27,90). Precisa definir com o usuário como esses valores serão configurados — sugestão: nova tabela `restaurante_tamanhos` ou campo dedicado no painel Admin. Aguardando alinhamento com o usuário do restaurante.
+- [ ] **Tamanhos e preços do cardápio WhatsApp** — tamanhos (Mini, Normal, Executiva) estão hardcoded em `gusto-agent/services/cardapio.py`. Preços agora vêm do campo `preco` de cada prato em `cardapio_web` (empresa_id IS NULL). Pendente: definir com o proprietário se os tamanhos também devem ser configuráveis por restaurante.
+- [ ] **Renomear repositório gusto-agent para AgenteFood** — mudança decidida mas não executada ainda. Fazer via GitHub Settings → rename. Atualizar `WEBHOOK_URL` no Railway após mudança.
 - [x] ~~Migrar `gusto-agent/services/cardapio.py` para ler `cardapio_web` no MySQL~~ — implementado; Google Sheets removido
 - [x] ~~Implementar webhook multi-tenant no gusto-agent~~ — `restaurante_id` propagado por toda a cadeia de handlers e cardápio
 - [x] ~~Corrigir mapeamento `TimeSpan → TimeOnly`~~ — resolvido com alias `horario_corte AS horario_corte_raw` no `EmpresaRepository`
@@ -384,11 +385,30 @@ UAZAPI instância GUSTO     → POST /webhook/gusto      → restaurante_id=1
 UAZAPI instância RestX     → POST /webhook/restaurante-x → restaurante_id=2
 ```
 
-### Implementação pendente no gusto-agent
-1. Endpoint `/webhook/{slug}` — recebe mensagens de cada instância UAZAPI
-2. Busca `restaurante_id` no banco via `SELECT id FROM restaurantes WHERE slug=?`
-3. Todas as queries do agent passam a filtrar por `restaurante_id` (cardápio, pedidos, clientes)
-4. Cardápio lido do MySQL (`cardapio_web WHERE restaurante_id=?`) em vez do Google Sheets
+### Implementado no gusto-agent
+- Endpoint `/webhook/{slug}-{restaurante_id}` — extrai `restaurante_id` do slug da URL
+- `restaurante_id` propagado por todo o fluxo: webhook → individual.py → cardapio.py → pedidos
+- Cardápio lido do MySQL (`cardapio_web WHERE restaurante_id=? AND empresa_id IS NULL`) — Google Sheets removido
+- Cache de cardápio de 15 min por restaurante
+- Preço por prato (não por tamanho) vindo do campo `preco` em `cardapio_web`
+- Extrator recebe lista de pratos e acompanhamentos do dia para normalização correta
+- Comando `pausar Xh` / `pausar Xm` via WhatsApp pelo proprietário (verificado pelo `telefone` em `restaurantes`)
+- Comando `retomar` para reativar o agente antes do prazo
+- Números de empresas conveniadas são ignorados silenciosamente (tabela `empresas_convenio`)
+
+---
+
+## Funcionalidades implementadas (Etapa 9+)
+
+| Feature | Descrição |
+|---|---|
+| Cardápio por empresa conveniada | `cardapio_web.empresa_id` — preço e cardápio específico por empresa |
+| Cardápio WhatsApp | `empresa_id IS NULL` — cardápio e preços para clientes diretos via bot |
+| Pedidos WhatsApp | Tela `/Admin/PedidosWhatsApp` — lista pedidos individuais com filtro e avanço de status |
+| Status de pedido | Fluxo: Em preparo → Saiu p/ entrega → Entregue (sem Pendente) |
+| Pausar agente | Admin envia `pausar 1h` / `pausar 30m` pelo WhatsApp; `retomar` para reativar |
+| Nome do restaurante dinâmico | Navbar exibe nome do restaurante vindo do banco (claim `RestauranteNome`) |
+| Login admin do restaurante | `gustoadm@digiplay.net.br` — acesso ao painel administrativo do GUSTO |
 
 ### Configuração UAZAPI por restaurante
 Cada instância configura seu webhook apontando para:
