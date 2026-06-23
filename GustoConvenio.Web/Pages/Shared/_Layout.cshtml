@@ -13,13 +13,15 @@
     var isAdmin      = User.FindFirst("IsAdmin")?.Value == "true";
     var isSuperAdmin = User.FindFirst("IsSuperAdmin")?.Value == "true";
     var empresa      = User.FindFirst("EmpresaNome")?.Value ?? "";
-    var nomeExib     = isSuperAdmin ? "Super Admin" : (isAdmin ? "Administrador" : empresa);
+    var nomeExib       = isSuperAdmin ? "Super Admin" : (isAdmin ? "Administrador" : empresa);
+    var restauranteNome = User.FindFirst("RestauranteNome")?.Value ?? "GUSTO Convênio";
 }
 
 <nav class="topbar">
-    <a class="topbar-brand" href="@(isSuperAdmin ? "/SuperAdmin/Restaurantes" : (isAdmin ? "/Admin/Pedidos" : "/Pedido"))">🍽️ GUSTO Convênio</a>
+    <a class="topbar-brand" href="@(isSuperAdmin ? "/SuperAdmin/Restaurantes" : (isAdmin ? "/Admin/Pedidos" : "/Pedido"))">🍽️ @restauranteNome</a>
     <span class="topbar-user">
-        @nomeExib &nbsp;|&nbsp;
+        <span style="font-size:15px; font-weight:700; color:#4a9edd;">@nomeExib</span>
+        &nbsp;|&nbsp;
         <a href="/Login/Logout">Sair</a>
     </span>
 </nav>
@@ -35,9 +37,10 @@
         else if (isAdmin)
         {
             <span class="sidebar-section">Administração</span>
-            <a class="sidebar-item @(page.StartsWith("/Admin/Pedidos")  ? "active" : "")" href="/Admin/Pedidos">📋 Pedidos do dia</a>
-            <a class="sidebar-item @(page.StartsWith("/Admin/Empresas") ? "active" : "")" href="/Admin/Empresas">🏢 Empresas</a>
-            <a class="sidebar-item @(page.StartsWith("/Admin/Cardapio") ? "active" : "")" href="/Admin/Cardapio">🥘 Cardápio</a>
+            <a class="sidebar-item @(page.StartsWith("/Admin/Pedidos")        ? "active" : "")" href="/Admin/Pedidos">📋 Pedidos do dia</a>
+            <a class="sidebar-item @(page.StartsWith("/Admin/PedidosWhatsApp") ? "active" : "")" href="/Admin/PedidosWhatsApp">📱 Pedidos WhatsApp</a>
+            <a class="sidebar-item @(page.StartsWith("/Admin/Empresas")        ? "active" : "")" href="/Admin/Empresas">🏢 Empresas</a>
+            <a class="sidebar-item @(page.StartsWith("/Admin/Cardapio")        ? "active" : "")" href="/Admin/Cardapio">🥘 Cardápio</a>
         }
         else
         {

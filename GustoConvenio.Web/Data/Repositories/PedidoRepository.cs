@@ -30,7 +30,6 @@ public class PedidoRepository(DbConnectionFactory db) : IPedidoRepository
 
         foreach (var item in itens)
         {
-            var preco = Tamanhos.Precos.GetValueOrDefault(item.Tamanho, 0m);
             await conn.ExecuteAsync("""
                 INSERT INTO itens_pedido
                     (pedido_id, nome_pessoa, mistura, tamanho, acomp_1, acomp_2, observacoes, valor_unitario)
@@ -45,7 +44,7 @@ public class PedidoRepository(DbConnectionFactory db) : IPedidoRepository
                     item.Tamanho,
                     item.Acomp1,
                     item.Acomp2,
-                    Preco = preco,
+                    Preco = item.Preco,
                 }, tx);
         }
 
@@ -94,7 +93,8 @@ public class PedidoRepository(DbConnectionFactory db) : IPedidoRepository
         var itens = (await conn.QueryAsync<ItemPedidoDto>("""
             SELECT 0 AS FuncionarioId, nome_pessoa AS Nome,
                    mistura AS Prato, tamanho AS Tamanho,
-                   acomp_1 AS Acomp1, acomp_2 AS Acomp2
+                   acomp_1 AS Acomp1, acomp_2 AS Acomp2,
+                   COALESCE(valor_unitario, 0) AS Preco
             FROM itens_pedido WHERE pedido_id = @PedidoId
             ORDER BY nome_pessoa
             """, new { PedidoId = pedidoId })).ToList();
@@ -127,7 +127,8 @@ public class PedidoRepository(DbConnectionFactory db) : IPedidoRepository
         var itens = (await conn.QueryAsync<ItemPedidoDto>("""
             SELECT 0 AS FuncionarioId, nome_pessoa AS Nome,
                    mistura AS Prato, tamanho AS Tamanho,
-                   acomp_1 AS Acomp1, acomp_2 AS Acomp2
+                   acomp_1 AS Acomp1, acomp_2 AS Acomp2,
+                   COALESCE(valor_unitario, 0) AS Preco
             FROM itens_pedido WHERE pedido_id = @PedidoId
             ORDER BY nome_pessoa
             """, new { PedidoId = pedidoId })).ToList();
@@ -156,5 +157,73 @@ public class PedidoRepository(DbConnectionFactory db) : IPedidoRepository
             Status:        (string)r.Status,
             PedidoId:      (int)r.PedidoId
         )).ToList();
+    }
+
+    public async Task<List<PedidoWhatsApp>> ListarWhatsAppHojeAsync(int restauranteId, string? statusFiltro = null)
+    {
+        using var conn = db.Create();
+        var sql = """
+            SELECT
+                p.id                AS Id,
+                p.numero_whatsapp   AS NumeroWhatsApp,
+                COALESCE(c.nome, p.numero_whatsapp) AS NomeCliente,
+                p.status            AS Status,
+                p.horario_pedido    AS HorarioPedido,
+                p.endereco_entrega  AS EnderecoEntrega,
+                p.hora_retirada     AS HoraRetirada,
+                i.mistura           AS Mistura,
+                i.tamanho           AS Tamanho,
+                i.acomp_1           AS Acomp1,
+                i.acomp_2           AS Acomp2,
+                i.observacoes       AS Observacoes,
+                COALESCE(i.valor_unitario, 0) AS ValorUnitario
+            FROM pedidos p
+            LEFT JOIN itens_pedido i ON i.pedido_id = p.id
+            LEFT JOIN clientes c ON c.numero_whatsapp = p.numero_whatsapp
+            WHERE p.tipo = 'individual'
+              AND p.restaurante_id = @RestauranteId
+              AND p.data_pedido = CURDATE()
+            """;
+
+        if (!string.IsNullOrEmpty(statusFiltro))
+            sql += " AND p.status = @StatusFiltro";
+
+        sql += " ORDER BY p.horario_pedido DESC";
+
+        return (await conn.QueryAsync<PedidoWhatsApp>(sql,
+            new { RestauranteId = restauranteId, StatusFiltro = statusFiltro })).ToList();
+    }
+
+    public async Task AtualizarStatusWhatsAppAsync(int pedidoId, string novoStatus)
+    {
+        using var conn = db.Create();
+        await conn.ExecuteAsync(
+            "UPDATE pedidos SET status = @Status WHERE id = @Id AND tipo = 'individual'",
+            new { Status = novoStatus, Id = pedidoId });
+    }
+
+    public async Task<(int EmPreparo, int Saiu, int Entregues)> TotaisWhatsAppHojeAsync(int restauranteId)
+    {
+        using var conn = db.Create();
+        var rows = await conn.QueryAsync("""
+            SELECT status, COUNT(*) AS Total
+            FROM pedidos
+            WHERE tipo = 'individual'
+              AND restaurante_id = @RestauranteId
+              AND data_pedido = CURDATE()
+            GROUP BY status
+            """, new { RestauranteId = restauranteId });
+
+        int emPreparo = 0, saiu = 0, entregues = 0;
+        foreach (var r in rows)
+        {
+            switch ((string)r.status)
+            {
+                case "preparo":  emPreparo = (int)r.Total; break;
+                case "saiu":     saiu      = (int)r.Total; break;
+                case "entregue": entregues = (int)r.Total; break;
+            }
+        }
+        return (emPreparo, saiu, entregues);
     }
 }

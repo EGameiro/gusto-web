@@ -299,12 +299,48 @@ Empresa loga → claims EmpresaId + EmpresaNome injetados no cookie
 ## Pendências
 
 ### Técnicas
-- [ ] Migrar `gusto-agent/services/cardapio.py` para ler `cardapio_web` no MySQL (parar de usar Google Sheets)
-- [ ] Implementar webhook multi-tenant no gusto-agent (ver seção abaixo)
+- [ ] **Tamanhos e preços do cardápio WhatsApp estão hardcoded** em `gusto-agent/services/cardapio.py` (Mini R$21,90, Normal R$23,90, Executiva R$24,90, Churrasco R$27,90). Precisa definir com o usuário como esses valores serão configurados — sugestão: nova tabela `restaurante_tamanhos` ou campo dedicado no painel Admin. Aguardando alinhamento com o usuário do restaurante.
+- [x] ~~Migrar `gusto-agent/services/cardapio.py` para ler `cardapio_web` no MySQL~~ — implementado; Google Sheets removido
+- [x] ~~Implementar webhook multi-tenant no gusto-agent~~ — `restaurante_id` propagado por toda a cadeia de handlers e cardápio
 - [x] ~~Corrigir mapeamento `TimeSpan → TimeOnly`~~ — resolvido com alias `horario_corte AS horario_corte_raw` no `EmpresaRepository`
 - [x] ~~Data Protection antiforgery token~~ — resolvido com `AddDataProtection().PersistKeysToFileSystem` + pacote `Microsoft.AspNetCore.DataProtection`
 - [x] ~~Arquitetura multi-restaurante~~ — implementada na Etapa 8
-- [ ] Domínio — `facerenew.app.br` sem www não abre (SmartASP força `www.` no Domain Manager). Usar `www.facerenew.app.br` ou configurar redirect no DNS
+- [x] ~~Domínio — `facerenew.app.br` sem www~~ — resolvido via configuração DNS/SmartASP
+
+---
+
+## Onboarding de Novo Restaurante
+
+### Passo a passo para ativar um novo restaurante
+
+**1. Portal Web (SuperAdmin)**
+- Login em `/Login` com conta SuperAdmin
+- `/SuperAdmin/Restaurantes/Criar` — preencher nome, slug (ex: `pizzaria-centro`), telefone, email
+- Sistema cria automaticamente o usuário Admin do restaurante
+
+**2. Banco de Dados**
+- Executar `migration_cardapio_empresa_preco.sql` se ainda não aplicado
+- Executar `migration_multi_restaurante.sql` se ainda não aplicado
+
+**3. Admin do Restaurante**
+- Login com as credenciais criadas pelo SuperAdmin
+- `/Admin/Empresas/Criar` — cadastrar cada empresa conveniada (nome, email, senha inicial, horário de corte)
+- `/Admin/Cardapio` → selecionar "📱 Cardápio WhatsApp" → cadastrar pratos e acompanhamentos por dia da semana
+- `/Admin/Cardapio` → selecionar cada empresa conveniada → cadastrar cardápio e preços específicos
+
+**4. gusto-agent**
+- Criar instância UAZAPI para o número WhatsApp do restaurante
+- Configurar webhook da instância apontando para:
+  `https://<dominio-do-agent>/webhook/<slug>-<restaurante_id>`
+  Exemplo: `https://agent.gusto.com.br/webhook/pizzaria-centro-2`
+- O `restaurante_id` é o `id` gerado na tabela `restaurantes` (ver no phpMyAdmin)
+
+**5. Checklist de validação**
+- [ ] Bot responde no WhatsApp com cardápio do dia
+- [ ] Empresa conveniada consegue logar no portal
+- [ ] Empresa consegue montar e confirmar pedido
+- [ ] Pedido aparece no painel Admin do restaurante
+- [ ] Impressora recebe o pedido (se poller.py configurado)
 
 ---
 

@@ -21,4 +21,9 @@ public interface IPedidoRepository
     // Admin — sem filtro de tenant
     Task<List<(string NomeEmpresa, int TotalMarmitas, string Status, int PedidoId)>> ListarTodosHojeAsync();
     Task<(string NomeEmpresa, PedidoResumo resumo, List<ItemPedidoDto> itens)?> ObterDetalhesAdminAsync(int pedidoId);
+
+    // Pedidos WhatsApp (individuais)
+    Task<List<PedidoWhatsApp>> ListarWhatsAppHojeAsync(int restauranteId, string? statusFiltro = null);
+    Task AtualizarStatusWhatsAppAsync(int pedidoId, string novoStatus);
+    Task<(int EmPreparo, int Saiu, int Entregues)> TotaisWhatsAppHojeAsync(int restauranteId);
 }
