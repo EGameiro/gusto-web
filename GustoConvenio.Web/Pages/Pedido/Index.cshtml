@@ -61,11 +61,18 @@
                 @foreach (var p in Model.Pratos)
                 {
                     <tr>
-                        <td class="row-label">@p.Nome</td>
+                        <td class="row-label">
+                            @p.Nome
+                            @if (p.Preco.HasValue)
+                            {
+                                <span style="color:#888; font-size:11px; margin-left:4px;">R$ @p.Preco.Value.ToString("N2")</span>
+                            }
+                        </td>
                         @foreach (var f in Model.Funcionarios)
                         {
                             <td>
                                 <div class="cell-x" data-tipo="prato" data-func="@f.Id" data-val="@p.Nome"
+                                     data-preco="@(p.Preco?.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) ?? "0")"
                                      onclick="toggleCell(this)"></div>
                             </td>
                         }
@@ -249,7 +256,9 @@ function prepararEnvio() {
         const funcId   = th.dataset.funcId;
         const funcNome = th.dataset.funcNome;
 
-        const prato   = document.querySelector(`.cell-x[data-tipo="prato"][data-func="${funcId}"].marcado`)?.dataset.val;
+        const pratoEl = document.querySelector(`.cell-x[data-tipo="prato"][data-func="${funcId}"].marcado`);
+        const prato   = pratoEl?.dataset.val;
+        const preco   = parseFloat(pratoEl?.dataset.preco ?? "0");
         const tamanho = document.querySelector(`.cell-x[data-tipo="tamanho"][data-func="${funcId}"].marcado`)?.dataset.val;
 
         // Ignora funcionários sem nenhuma seleção
@@ -263,11 +272,12 @@ function prepararEnvio() {
 
         itens.push({
             funcionarioId: parseInt(funcId),
-            nome:   funcNome,
-            prato:  prato  ?? "",
+            nome:    funcNome,
+            prato:   prato   ?? "",
             tamanho: tamanho ?? "",
-            acomp1: acomps[0] ?? null,
-            acomp2: acomps[1] ?? null,
+            acomp1:  acomps[0] ?? null,
+            acomp2:  acomps[1] ?? null,
+            preco:   preco,
         });
     });
 

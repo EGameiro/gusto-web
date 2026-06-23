@@ -37,20 +37,19 @@
             @foreach (var item in Model.Itens)
             {
                 var acomps = new[] { item.Acomp1, item.Acomp2 }.Where(a => !string.IsNullOrEmpty(a));
-                var preco  = GustoConvenio.Web.Models.Tamanhos.Precos.GetValueOrDefault(item.Tamanho ?? "", 0m);
                 <tr>
                     <td><strong>@item.Nome</strong></td>
                     <td>@item.Prato</td>
                     <td>@item.Tamanho</td>
                     <td>@(acomps.Any() ? string.Join(" + ", acomps) : "—")</td>
-                    <td style="text-align:right;">R$ @preco.ToString("N2")</td>
+                    <td style="text-align:right;">R$ @item.Preco.ToString("N2")</td>
                 </tr>
             }
         </tbody>
         <tfoot>
             <tr style="background:#f7f7f7; font-weight:600;">
                 <td colspan="4" style="text-align:right; padding:10px 14px;">Total</td>
-                <td style="text-align:right; padding:10px 14px;">R$ @Model.Resumo.TotalValor.ToString("N2")</td>
+                <td style="text-align:right; padding:10px 14px;">R$ @Model.Itens.Sum(i => i.Preco).ToString("N2")</td>
             </tr>
         </tfoot>
     </table>

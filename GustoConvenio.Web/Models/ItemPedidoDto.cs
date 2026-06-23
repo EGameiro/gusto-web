@@ -6,7 +6,8 @@ public record ItemPedidoDto(
     string  Prato,
     string  Tamanho,
     string? Acomp1,
-    string? Acomp2
+    string? Acomp2,
+    decimal Preco = 0m
 );
 
 public static class Tamanhos

@@ -6,6 +6,7 @@ public interface ICardapioRepository
 {
     Task<List<CardapioItem>> ListarPorDiaAsync(int diaSemana, int restauranteId);
     Task<List<CardapioItem>> ListarTodosAsync(int restauranteId);
+    Task<List<CardapioItem>> ListarPorDiaEEmpresaAsync(int diaSemana, int restauranteId, int? empresaId);
     Task<int> CriarAsync(CardapioItem item);
     Task ExcluirAsync(int id, int restauranteId);
 }

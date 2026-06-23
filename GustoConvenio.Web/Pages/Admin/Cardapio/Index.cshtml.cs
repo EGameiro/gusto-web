@@ -9,59 +9,80 @@ using GustoConvenio.Web.Models;
 namespace GustoConvenio.Web.Pages.Admin.Cardapio;
 
 [Authorize(Policy = "Admin")]
-public class IndexModel(ICardapioRepository repo, TenantService tenant) : PageModel
+public class IndexModel(ICardapioRepository repo, IEmpresaRepository empresaRepo, TenantService tenant) : PageModel
 {
-    public List<CardapioItem> Itens    { get; set; } = [];
-    public int                DiaAtivo { get; set; }
+    public List<CardapioItem> Itens       { get; set; } = [];
+    public List<Empresa>      Empresas    { get; set; } = [];
+    public int                DiaAtivo    { get; set; }
+    public int?               EmpresaAtiva { get; set; }
+    public bool               WhatsAppAtivo { get; set; }
 
-    // Form de adição
-    [BindProperty] public int    DiaSemana { get; set; }
-    [BindProperty] public string Tipo      { get; set; } = "prato";
+    [BindProperty] public int      DiaSemana { get; set; }
+    [BindProperty] public string   Tipo      { get; set; } = "prato";
     [BindProperty, Required, MaxLength(200)]
-    public string              Nome      { get; set; } = "";
-    [BindProperty] public int  Ordem     { get; set; } = 0;
+    public string               Nome      { get; set; } = "";
+    [BindProperty] public int      Ordem     { get; set; } = 0;
+    [BindProperty] public int?     EmpresaId { get; set; }
+    [BindProperty] public bool     IsWhatsApp { get; set; }
+    [BindProperty] public decimal? Preco     { get; set; }
 
     private static readonly string[] Dias = ["Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
     public string[] NomesDias => Dias;
 
-    public async Task OnGetAsync(int dia = 0)
+    public async Task OnGetAsync(int dia = 0, string? empresaId = null)
     {
-        DiaAtivo = Math.Clamp(dia, 0, 5);
-        Itens    = (await repo.ListarTodosAsync(tenant.RestauranteId))
-                    .Where(i => i.DiaSemana == DiaAtivo)
-                    .ToList();
-        DiaSemana = DiaAtivo;
+        DiaAtivo      = Math.Clamp(dia, 0, 5);
+        DiaSemana     = DiaAtivo;
+        WhatsAppAtivo = empresaId == "whatsapp";
+        EmpresaAtiva  = int.TryParse(empresaId, out var eid) ? eid : null;
+        EmpresaId     = EmpresaAtiva;
+        IsWhatsApp    = WhatsAppAtivo;
+
+        Empresas = await empresaRepo.ListarTodasAsync(tenant.RestauranteId);
+
+        // WhatsApp → empresa_id IS NULL; conveniada → empresa_id = X
+        var filtroEmpresa = WhatsAppAtivo ? (int?)null : EmpresaAtiva;
+        var deveCarregar  = WhatsAppAtivo || EmpresaAtiva.HasValue;
+        Itens = deveCarregar
+            ? await repo.ListarPorDiaEEmpresaAsync(DiaAtivo, tenant.RestauranteId, filtroEmpresa)
+            : [];
     }
 
     public async Task<IActionResult> OnPostAdicionarAsync()
     {
+        var filtroEmpresa = IsWhatsApp ? (int?)null : EmpresaId;
+
         if (!ModelState.IsValid)
         {
-            DiaAtivo = DiaSemana;
-            Itens    = (await repo.ListarTodosAsync(tenant.RestauranteId))
-                        .Where(i => i.DiaSemana == DiaAtivo)
-                        .ToList();
+            DiaAtivo      = DiaSemana;
+            EmpresaAtiva  = EmpresaId;
+            WhatsAppAtivo = IsWhatsApp;
+            Empresas      = await empresaRepo.ListarTodasAsync(tenant.RestauranteId);
+            Itens         = await repo.ListarPorDiaEEmpresaAsync(DiaAtivo, tenant.RestauranteId, filtroEmpresa);
             return Page();
         }
 
         await repo.CriarAsync(new CardapioItem
         {
-            DiaSemana    = DiaSemana,
-            Tipo         = Tipo,
-            Nome         = Nome.Trim(),
-            Ativo        = true,
-            Ordem        = Ordem,
+            DiaSemana     = DiaSemana,
+            Tipo          = Tipo,
+            Nome          = Nome.Trim(),
+            Ativo         = true,
+            Ordem         = Ordem,
             RestauranteId = tenant.RestauranteId,
+            EmpresaId     = filtroEmpresa,
+            Preco         = Preco,
         });
 
         TempData["Sucesso"] = $"\"{Nome}\" adicionado ao cardápio de {Dias[DiaSemana]}.";
-        return RedirectToPage(new { dia = DiaSemana });
+        var redirect = IsWhatsApp ? "whatsapp" : EmpresaId?.ToString();
+        return RedirectToPage(new { dia = DiaSemana, empresaId = redirect });
     }
 
-    public async Task<IActionResult> OnPostExcluirAsync(int id, int dia)
+    public async Task<IActionResult> OnPostExcluirAsync(int id, int dia, string? empresaId)
     {
         await repo.ExcluirAsync(id, tenant.RestauranteId);
         TempData["Sucesso"] = "Item removido do cardápio.";
-        return RedirectToPage(new { dia });
+        return RedirectToPage(new { dia, empresaId });
     }
 }

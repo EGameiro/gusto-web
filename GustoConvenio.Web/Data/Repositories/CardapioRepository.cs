@@ -23,11 +23,23 @@ public class CardapioRepository(DbConnectionFactory db) : ICardapioRepository
         return rows.ToList();
     }
 
+    public async Task<List<CardapioItem>> ListarPorDiaEEmpresaAsync(int diaSemana, int restauranteId, int? empresaId)
+    {
+        using var conn = db.Create();
+        var rows = await conn.QueryAsync<CardapioItem>(
+            @"SELECT * FROM cardapio_web
+              WHERE dia_semana = @DiaSemana AND restaurante_id = @RestauranteId AND ativo = 1
+                AND (empresa_id = @EmpresaId OR (@EmpresaId IS NULL AND empresa_id IS NULL))
+              ORDER BY tipo, ordem, nome",
+            new { DiaSemana = diaSemana, RestauranteId = restauranteId, EmpresaId = empresaId });
+        return rows.ToList();
+    }
+
     public async Task<int> CriarAsync(CardapioItem item)
     {
         using var conn = db.Create();
         return await conn.ExecuteScalarAsync<int>(
-            "INSERT INTO cardapio_web (dia_semana, tipo, nome, ativo, ordem, restaurante_id) VALUES (@DiaSemana, @Tipo, @Nome, @Ativo, @Ordem, @RestauranteId); SELECT LAST_INSERT_ID();",
+            "INSERT INTO cardapio_web (dia_semana, tipo, nome, ativo, ordem, restaurante_id, empresa_id, preco) VALUES (@DiaSemana, @Tipo, @Nome, @Ativo, @Ordem, @RestauranteId, @EmpresaId, @Preco); SELECT LAST_INSERT_ID();",
             item);
     }
 

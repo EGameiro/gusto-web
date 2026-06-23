@@ -9,4 +9,6 @@ public class CardapioItem
     public bool Ativo { get; set; } = true;
     public int Ordem { get; set; }
     public int RestauranteId { get; set; } = 1;
+    public int? EmpresaId { get; set; }
+    public decimal? Preco { get; set; }
 }

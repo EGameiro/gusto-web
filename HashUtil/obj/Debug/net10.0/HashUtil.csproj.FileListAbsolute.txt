@@ -15,3 +15,4 @@ F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\refint\HashUtil.d
 F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\HashUtil.pdb
 F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\HashUtil.genruntimeconfig.cache
 F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\ref\HashUtil.dll
+F:\claudeIA\Projeto GUSTO\gusto-WEB\HashUtil\obj\Debug\net10.0\HashUtil.sourcelink.json

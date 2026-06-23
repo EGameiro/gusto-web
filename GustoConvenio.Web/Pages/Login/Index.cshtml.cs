@@ -8,7 +8,7 @@ using GustoConvenio.Web.Data.Repositories;
 
 namespace GustoConvenio.Web.Pages.Login;
 
-public class IndexModel(IEmpresaRepository empresaRepo, IAdminUserRepository adminRepo) : PageModel
+public class IndexModel(IEmpresaRepository empresaRepo, IAdminUserRepository adminRepo, IRestauranteRepository restauranteRepo) : PageModel
 {
     [BindProperty, Required, EmailAddress]
     public string Email { get; set; } = "";
@@ -34,6 +34,7 @@ public class IndexModel(IEmpresaRepository empresaRepo, IAdminUserRepository adm
         var admin = await adminRepo.ObterPorEmailAsync(Email);
         if (admin is not null && BCrypt.Net.BCrypt.Verify(Senha, admin.SenhaHash))
         {
+            var restauranteAdmin = await restauranteRepo.ObterPorIdAsync(admin.RestauranteId);
             var claims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, admin.Id.ToString()),
@@ -41,6 +42,7 @@ public class IndexModel(IEmpresaRepository empresaRepo, IAdminUserRepository adm
                 new("IsAdmin", "true"),
                 new("EmpresaNome", admin.Nome),
                 new("RestauranteId", admin.RestauranteId.ToString()),
+                new("RestauranteNome", restauranteAdmin?.Nome ?? "Restaurante"),
                 new("IsSuperAdmin", admin.IsSuperAdmin ? "true" : "false"),
             };
             await SignInAsync(claims);
@@ -55,12 +57,14 @@ public class IndexModel(IEmpresaRepository empresaRepo, IAdminUserRepository adm
             && !string.IsNullOrEmpty(empresa.SenhaHash)
             && BCrypt.Net.BCrypt.Verify(Senha, empresa.SenhaHash))
         {
+            var restauranteEmpresa = await restauranteRepo.ObterPorIdAsync(empresa.RestauranteId);
             var claims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, empresa.Id.ToString()),
                 new(ClaimTypes.Name, empresa.Email!),
                 new("EmpresaId",   empresa.Id.ToString()),
                 new("EmpresaNome", empresa.NomeEmpresa),
+                new("RestauranteNome", restauranteEmpresa?.Nome ?? "Restaurante"),
             };
             await SignInAsync(claims);
             return RedirectToPage("/Pedido/Index");

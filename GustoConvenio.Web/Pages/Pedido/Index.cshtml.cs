@@ -80,7 +80,7 @@ public class IndexModel(
         var diaSemana   = (int)DateTime.Today.DayOfWeek;
         // DayOfWeek: 0=Dom,1=Seg...6=Sab  → nosso: 0=Seg...5=Sab
         var diaCardapio = diaSemana == 0 ? 4 : diaSemana - 1; // Dom cai em Sex como fallback
-        var cardapio    = await cardapioRepo.ListarPorDiaAsync(diaCardapio, empresa?.RestauranteId ?? 1);
+        var cardapio    = await cardapioRepo.ListarPorDiaEEmpresaAsync(diaCardapio, empresa?.RestauranteId ?? 1, tenant.EmpresaId);
         Pratos          = cardapio.Where(c => c.Tipo == "prato").ToList();
         Acompanhamentos = cardapio.Where(c => c.Tipo == "acompanhamento").ToList();
     }

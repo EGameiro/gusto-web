@@ -1,1 +1,1 @@
-Console.WriteLine(BCrypt.Net.BCrypt.HashPassword("Admin@01", 12));
+Console.WriteLine(BCrypt.Net.BCrypt.HashPassword("senha01", 12));
