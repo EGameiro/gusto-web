@@ -6,7 +6,7 @@ public class PedidoWhatsApp
     public string    NumeroWhatsApp  { get; set; } = "";
     public string    NomeCliente     { get; set; } = "";
     public string    Status          { get; set; } = "";
-    public TimeOnly  HorarioPedido   { get; set; }
+    public TimeSpan  HorarioPedido   { get; set; }
     public string?   EnderecoEntrega { get; set; }
     public string?   HoraRetirada    { get; set; }
     public string?   Mistura         { get; set; }
