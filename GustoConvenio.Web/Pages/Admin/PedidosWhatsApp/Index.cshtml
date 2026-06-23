@@ -7,18 +7,21 @@
         "preparo"  => "badge-blue",
         "saiu"     => "badge-amber",
         "entregue" => "badge-green",
+        "pendente" => "badge-blue",
         _          => "badge-gray"
     };
     string BadgeTxt(string s) => s switch {
         "preparo"  => "Em preparo",
         "saiu"     => "Saiu p/ entrega",
         "entregue" => "Entregue",
+        "pendente" => "Em preparo",
         _          => s
     };
     string ProxBtnTxt(string s) => s switch {
-        "preparo" => "Saiu p/ entrega",
-        "saiu"    => "Entregue",
-        _         => ""
+        "preparo"  => "Saiu p/ entrega",
+        "saiu"     => "Entregue",
+        "pendente" => "Saiu p/ entrega",
+        _          => ""
     };
 }
 

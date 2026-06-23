@@ -178,10 +178,11 @@ public class PedidoRepository(DbConnectionFactory db) : IPedidoRepository
                 i.observacoes       AS Observacoes,
                 COALESCE(i.valor_unitario, 0) AS ValorUnitario
             FROM pedidos p
-            LEFT JOIN itens_pedido i ON i.pedido_id = p.id
+            LEFT JOIN itens_pedido i ON i.id = (
+                SELECT id FROM itens_pedido WHERE pedido_id = p.id LIMIT 1
+            )
             LEFT JOIN clientes c ON c.numero_whatsapp = p.numero_whatsapp
             WHERE p.tipo = 'individual'
-              AND p.restaurante_id = @RestauranteId
               AND p.data_pedido = CURDATE()
             """;
 
@@ -209,7 +210,6 @@ public class PedidoRepository(DbConnectionFactory db) : IPedidoRepository
             SELECT status, COUNT(*) AS Total
             FROM pedidos
             WHERE tipo = 'individual'
-              AND restaurante_id = @RestauranteId
               AND data_pedido = CURDATE()
             GROUP BY status
             """, new { RestauranteId = restauranteId });
