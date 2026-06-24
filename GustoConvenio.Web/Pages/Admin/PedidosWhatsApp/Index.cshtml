@@ -70,7 +70,6 @@ else
     foreach (var p in Model.Pedidos)
     {
         var isEntregue = p.Status == "entregue";
-        var acomps = new[] { p.Acomp1, p.Acomp2 }.Where(a => !string.IsNullOrEmpty(a));
         var tipoEntrega = !string.IsNullOrEmpty(p.EnderecoEntrega)
             ? $"Entrega — {p.EnderecoEntrega}"
             : !string.IsNullOrEmpty(p.HoraRetirada)
@@ -85,29 +84,33 @@ else
                                 font-size:13px; font-weight:600; color:#1d6fa5; flex-shrink:0;">
                         @(p.NomeCliente.Length >= 2 ? p.NomeCliente.Substring(0,2).ToUpper() : "??")
                     </div>
-                    <div>
+                    <div style="flex:1;">
                         <div style="font-weight:600; font-size:15px;">@p.NomeCliente</div>
                         <div style="font-size:13px; color:#666; margin:2px 0 6px;">
                             &#128337; @p.HorarioPedido.ToString(@"hh\:mm")
                             &nbsp;&middot;&nbsp;
                             &#128205; @tipoEntrega
                         </div>
-                        <div style="font-size:13px;">
-                            <strong>@p.Mistura</strong> — @p.Tamanho
-                            @if (acomps.Any())
-                            {
-                                <span style="color:#666;"> &nbsp;&middot;&nbsp; @string.Join(" + ", acomps)</span>
-                            }
-                        </div>
-                        @if (!string.IsNullOrEmpty(p.Observacoes))
+                        @foreach (var item in p.Itens)
                         {
-                            <div style="font-size:12px; color:#888; margin-top:4px;">Obs: @p.Observacoes</div>
+                            var acomps = new[] { item.Acomp1, item.Acomp2 }.Where(a => !string.IsNullOrEmpty(a));
+                            <div style="font-size:13px; margin-bottom:2px;">
+                                <strong>@item.Mistura</strong> — @item.Tamanho
+                                @if (acomps.Any())
+                                {
+                                    <span style="color:#666;"> &nbsp;&middot;&nbsp; @string.Join(" + ", acomps)</span>
+                                }
+                                @if (!string.IsNullOrEmpty(item.Observacoes))
+                                {
+                                    <span style="color:#888; font-size:12px;"> &nbsp;(Obs: @item.Observacoes)</span>
+                                }
+                            </div>
                         }
                     </div>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0;">
                     <span class="badge @BadgeCls(p.Status)">@BadgeTxt(p.Status)</span>
-                    <div style="font-size:15px; font-weight:600;">R$ @p.ValorUnitario.ToString("N2")</div>
+                    <div style="font-size:15px; font-weight:600;">R$ @p.ValorTotal.ToString("N2")</div>
                     @if (!isEntregue)
                     {
                         <form method="post" asp-page-handler="AvancarStatus">

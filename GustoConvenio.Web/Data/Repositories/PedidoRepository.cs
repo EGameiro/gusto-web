@@ -162,7 +162,7 @@ public class PedidoRepository(DbConnectionFactory db) : IPedidoRepository
     public async Task<List<PedidoWhatsApp>> ListarWhatsAppHojeAsync(int restauranteId, string? statusFiltro = null)
     {
         using var conn = db.Create();
-        var sql = """
+        var sqlPedidos = """
             SELECT
                 p.id                AS Id,
                 p.numero_whatsapp   AS NumeroWhatsApp,
@@ -170,29 +170,48 @@ public class PedidoRepository(DbConnectionFactory db) : IPedidoRepository
                 p.status            AS Status,
                 p.horario_pedido    AS HorarioPedido,
                 p.endereco_entrega  AS EnderecoEntrega,
-                p.hora_retirada     AS HoraRetirada,
-                i.mistura           AS Mistura,
-                i.tamanho           AS Tamanho,
-                i.acomp_1           AS Acomp1,
-                i.acomp_2           AS Acomp2,
-                i.observacoes       AS Observacoes,
-                COALESCE(i.valor_unitario, 0) AS ValorUnitario
+                p.hora_retirada     AS HoraRetirada
             FROM pedidos p
-            LEFT JOIN itens_pedido i ON i.id = (
-                SELECT id FROM itens_pedido WHERE pedido_id = p.id LIMIT 1
-            )
             LEFT JOIN clientes c ON c.numero_whatsapp = p.numero_whatsapp
             WHERE p.tipo = 'individual'
               AND p.data_pedido = CURDATE()
             """;
 
         if (!string.IsNullOrEmpty(statusFiltro))
-            sql += " AND p.status = @StatusFiltro";
+            sqlPedidos += " AND p.status = @StatusFiltro";
 
-        sql += " ORDER BY p.horario_pedido DESC";
+        sqlPedidos += " ORDER BY p.horario_pedido DESC";
 
-        return (await conn.QueryAsync<PedidoWhatsApp>(sql,
-            new { RestauranteId = restauranteId, StatusFiltro = statusFiltro })).ToList();
+        var pedidos = (await conn.QueryAsync<PedidoWhatsApp>(sqlPedidos,
+            new { StatusFiltro = statusFiltro })).ToList();
+
+        if (pedidos.Count == 0) return pedidos;
+
+        var ids = pedidos.Select(p => p.Id).ToArray();
+        var itens = (await conn.QueryAsync<(int PedidoId, string? Mistura, string? Tamanho, string? Acomp1, string? Acomp2, string? Observacoes, decimal ValorUnitario)>("""
+            SELECT pedido_id AS PedidoId, mistura AS Mistura, tamanho AS Tamanho,
+                   acomp_1 AS Acomp1, acomp_2 AS Acomp2, observacoes AS Observacoes,
+                   COALESCE(valor_unitario, 0) AS ValorUnitario
+            FROM itens_pedido
+            WHERE pedido_id IN @Ids
+            ORDER BY id
+            """, new { Ids = ids })).ToList();
+
+        var itensPorPedido = itens.GroupBy(i => i.PedidoId)
+            .ToDictionary(g => g.Key, g => g.Select(i => new ItemWhatsApp
+            {
+                Mistura      = i.Mistura,
+                Tamanho      = i.Tamanho,
+                Acomp1       = i.Acomp1,
+                Acomp2       = i.Acomp2,
+                Observacoes  = i.Observacoes,
+                ValorUnitario = i.ValorUnitario,
+            }).ToList());
+
+        foreach (var p in pedidos)
+            p.Itens = itensPorPedido.GetValueOrDefault(p.Id, []);
+
+        return pedidos;
     }
 
     public async Task AtualizarStatusWhatsAppAsync(int pedidoId, string novoStatus)

@@ -1,5 +1,15 @@
 namespace GustoConvenio.Web.Models;
 
+public class ItemWhatsApp
+{
+    public string? Mistura    { get; set; }
+    public string? Tamanho    { get; set; }
+    public string? Acomp1     { get; set; }
+    public string? Acomp2     { get; set; }
+    public string? Observacoes { get; set; }
+    public decimal ValorUnitario { get; set; }
+}
+
 public class PedidoWhatsApp
 {
     public int       Id              { get; set; }
@@ -9,10 +19,6 @@ public class PedidoWhatsApp
     public TimeSpan  HorarioPedido   { get; set; }
     public string?   EnderecoEntrega { get; set; }
     public string?   HoraRetirada    { get; set; }
-    public string?   Mistura         { get; set; }
-    public string?   Tamanho         { get; set; }
-    public string?   Acomp1          { get; set; }
-    public string?   Acomp2          { get; set; }
-    public string?   Observacoes     { get; set; }
-    public decimal   ValorUnitario   { get; set; }
+    public List<ItemWhatsApp> Itens  { get; set; } = [];
+    public decimal   ValorTotal      => Itens.Sum(i => i.ValorUnitario);
 }
