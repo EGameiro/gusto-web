@@ -85,6 +85,14 @@ public class IndexModel(ICardapioRepository repo, IEmpresaRepository empresaRepo
         return RedirectToPage(new { dia = DiaSemana, empresaId = redirect });
     }
 
+    public async Task<IActionResult> OnPostSalvarPrecosAsync(int id, int dia, string? empresaId,
+        decimal? precoMini, decimal? precoNormal, decimal? precoExecutiva)
+    {
+        await repo.AtualizarPrecosAsync(id, tenant.RestauranteId, precoMini, precoNormal, precoExecutiva);
+        TempData["Sucesso"] = "Preços atualizados.";
+        return RedirectToPage(new { dia, empresaId });
+    }
+
     public async Task<IActionResult> OnPostExcluirAsync(int id, int dia, string? empresaId)
     {
         await repo.ExcluirAsync(id, tenant.RestauranteId);

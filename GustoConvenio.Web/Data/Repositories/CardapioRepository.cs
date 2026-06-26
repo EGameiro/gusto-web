@@ -47,6 +47,16 @@ public class CardapioRepository(DbConnectionFactory db) : ICardapioRepository
             item);
     }
 
+    public async Task AtualizarPrecosAsync(int id, int restauranteId, decimal? precoMini, decimal? precoNormal, decimal? precoExecutiva)
+    {
+        using var conn = db.Create();
+        await conn.ExecuteAsync(
+            @"UPDATE cardapio_web
+              SET preco_mini = @PrecoMini, preco_normal = @PrecoNormal, preco_executiva = @PrecoExecutiva
+              WHERE id = @Id AND restaurante_id = @RestauranteId",
+            new { Id = id, RestauranteId = restauranteId, PrecoMini = precoMini, PrecoNormal = precoNormal, PrecoExecutiva = precoExecutiva });
+    }
+
     public async Task ExcluirAsync(int id, int restauranteId)
     {
         using var conn = db.Create();
