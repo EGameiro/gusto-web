@@ -39,7 +39,11 @@ public class CardapioRepository(DbConnectionFactory db) : ICardapioRepository
     {
         using var conn = db.Create();
         return await conn.ExecuteScalarAsync<int>(
-            "INSERT INTO cardapio_web (dia_semana, tipo, nome, ativo, ordem, restaurante_id, empresa_id, preco) VALUES (@DiaSemana, @Tipo, @Nome, @Ativo, @Ordem, @RestauranteId, @EmpresaId, @Preco); SELECT LAST_INSERT_ID();",
+            @"INSERT INTO cardapio_web
+                (dia_semana, tipo, nome, ativo, ordem, restaurante_id, empresa_id, preco, preco_mini, preco_normal, preco_executiva)
+              VALUES
+                (@DiaSemana, @Tipo, @Nome, @Ativo, @Ordem, @RestauranteId, @EmpresaId, @Preco, @PrecoMini, @PrecoNormal, @PrecoExecutiva);
+              SELECT LAST_INSERT_ID();",
             item);
     }
 

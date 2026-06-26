@@ -11,4 +11,7 @@ public class CardapioItem
     public int RestauranteId { get; set; } = 1;
     public int? EmpresaId { get; set; }
     public decimal? Preco { get; set; }
+    public decimal? PrecoMini { get; set; }
+    public decimal? PrecoNormal { get; set; }
+    public decimal? PrecoExecutiva { get; set; }
 }

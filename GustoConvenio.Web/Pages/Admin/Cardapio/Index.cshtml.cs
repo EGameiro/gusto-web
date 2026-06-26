@@ -17,14 +17,17 @@ public class IndexModel(ICardapioRepository repo, IEmpresaRepository empresaRepo
     public int?               EmpresaAtiva { get; set; }
     public bool               WhatsAppAtivo { get; set; }
 
-    [BindProperty] public int      DiaSemana { get; set; }
-    [BindProperty] public string   Tipo      { get; set; } = "prato";
+    [BindProperty] public int      DiaSemana  { get; set; }
+    [BindProperty] public string   Tipo       { get; set; } = "prato";
     [BindProperty, Required, MaxLength(200)]
-    public string               Nome      { get; set; } = "";
-    [BindProperty] public int      Ordem     { get; set; } = 0;
-    [BindProperty] public int?     EmpresaId { get; set; }
+    public string               Nome       { get; set; } = "";
+    [BindProperty] public int      Ordem      { get; set; } = 0;
+    [BindProperty] public int?     EmpresaId  { get; set; }
     [BindProperty] public bool     IsWhatsApp { get; set; }
-    [BindProperty] public decimal? Preco     { get; set; }
+    [BindProperty] public decimal? Preco          { get; set; }
+    [BindProperty] public decimal? PrecoMini      { get; set; }
+    [BindProperty] public decimal? PrecoNormal    { get; set; }
+    [BindProperty] public decimal? PrecoExecutiva { get; set; }
 
     private static readonly string[] Dias = ["Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
     public string[] NomesDias => Dias;
@@ -72,6 +75,9 @@ public class IndexModel(ICardapioRepository repo, IEmpresaRepository empresaRepo
             RestauranteId = tenant.RestauranteId,
             EmpresaId     = filtroEmpresa,
             Preco         = Preco,
+            PrecoMini      = Tipo == "prato" ? PrecoMini      : null,
+            PrecoNormal    = Tipo == "prato" ? PrecoNormal    : null,
+            PrecoExecutiva = Tipo == "prato" ? PrecoExecutiva : null,
         });
 
         TempData["Sucesso"] = $"\"{Nome}\" adicionado ao cardápio de {Dias[DiaSemana]}.";
