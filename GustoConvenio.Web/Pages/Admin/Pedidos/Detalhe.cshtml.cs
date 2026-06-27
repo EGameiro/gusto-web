@@ -23,4 +23,13 @@ public class DetalheModel(IPedidoRepository repo) : PageModel
         Itens       = resultado.Value.itens;
         return Page();
     }
+
+    public async Task<IActionResult> OnPostAtualizarStatusAsync(int id, string status)
+    {
+        var validos = new[] { "pendente", "preparo", "saiu", "entregue" };
+        if (!validos.Contains(status)) return BadRequest();
+
+        await repo.AtualizarStatusConvenioAsync(id, status);
+        return RedirectToPage(new { id });
+    }
 }

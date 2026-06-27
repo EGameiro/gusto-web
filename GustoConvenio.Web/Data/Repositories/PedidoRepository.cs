@@ -214,6 +214,14 @@ public class PedidoRepository(DbConnectionFactory db) : IPedidoRepository
         return pedidos;
     }
 
+    public async Task AtualizarStatusConvenioAsync(int pedidoId, string novoStatus)
+    {
+        using var conn = db.Create();
+        await conn.ExecuteAsync(
+            "UPDATE pedidos SET status = @Status WHERE id = @Id AND tipo = 'convenio'",
+            new { Status = novoStatus, Id = pedidoId });
+    }
+
     public async Task AtualizarStatusWhatsAppAsync(int pedidoId, string novoStatus)
     {
         using var conn = db.Create();

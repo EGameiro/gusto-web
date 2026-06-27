@@ -55,4 +55,24 @@
     </table>
 </div>
 
-<a href="/Admin/Pedidos" class="btn">← Voltar aos pedidos</a>
+@{
+    var proximoStatus = Model.Resumo.Status switch
+    {
+        "pendente" => ("preparo",  "▶ Em preparo"),
+        "preparo"  => ("saiu",     "🛵 Saiu p/ entrega"),
+        "saiu"     => ("entregue", "✓ Marcar entregue"),
+        _          => (null, null)
+    };
+}
+
+<div style="display:flex; gap:10px; align-items:center; margin-bottom:16px;">
+    <a href="/Admin/Pedidos" class="btn">← Voltar</a>
+    @if (proximoStatus.Item1 is not null)
+    {
+        <form method="post" asp-page-handler="AtualizarStatus">
+            <input type="hidden" name="id"     value="@Model.Resumo.Id" />
+            <input type="hidden" name="status" value="@proximoStatus.Item1" />
+            <button type="submit" class="btn btn-primary">@proximoStatus.Item2</button>
+        </form>
+    }
+</div>
