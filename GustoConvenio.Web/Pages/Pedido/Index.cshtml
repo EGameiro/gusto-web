@@ -72,7 +72,9 @@
                         {
                             <td>
                                 <div class="cell-x" data-tipo="prato" data-func="@f.Id" data-val="@p.Nome"
-                                     data-preco="@(p.Preco?.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) ?? "0")"
+                                     data-preco-mini="@(p.PrecoMini?.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) ?? "0")"
+                                     data-preco-normal="@(p.PrecoNormal?.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) ?? "0")"
+                                     data-preco-executiva="@(p.PrecoExecutiva?.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) ?? "0")"
                                      onclick="toggleCell(this)"></div>
                             </td>
                         }
@@ -258,8 +260,9 @@ function prepararEnvio() {
 
         const pratoEl = document.querySelector(`.cell-x[data-tipo="prato"][data-func="${funcId}"].marcado`);
         const prato   = pratoEl?.dataset.val;
-        const preco   = parseFloat(pratoEl?.dataset.preco ?? "0");
         const tamanho = document.querySelector(`.cell-x[data-tipo="tamanho"][data-func="${funcId}"].marcado`)?.dataset.val;
+        const precoKey = tamanho === "Mini" ? "precoMini" : tamanho === "Normal" ? "precoNormal" : "precoExecutiva";
+        const preco   = parseFloat(pratoEl?.dataset[precoKey] ?? "0");
 
         // Ignora funcionários sem nenhuma seleção
         if (!prato && !tamanho) return;
