@@ -23,6 +23,9 @@ public interface IPedidoRepository
     Task<(string NomeEmpresa, PedidoResumo resumo, List<ItemPedidoDto> itens)?> ObterDetalhesAdminAsync(int pedidoId);
     Task AtualizarStatusConvenioAsync(int pedidoId, string novoStatus);
 
+    // Pedidos convênio
+    Task<List<PedidoConvenio>> ListarConvenioHojeAsync(string? statusFiltro = null);
+
     // Pedidos WhatsApp (individuais)
     Task<List<PedidoWhatsApp>> ListarWhatsAppHojeAsync(int restauranteId, string? statusFiltro = null);
     Task AtualizarStatusWhatsAppAsync(int pedidoId, string novoStatus);

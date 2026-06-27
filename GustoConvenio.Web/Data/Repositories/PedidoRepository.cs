@@ -214,6 +214,41 @@ public class PedidoRepository(DbConnectionFactory db) : IPedidoRepository
         return pedidos;
     }
 
+    public async Task<List<PedidoConvenio>> ListarConvenioHojeAsync(string? statusFiltro = null)
+    {
+        using var conn = db.Create();
+        var sql = """
+            SELECT p.id AS Id, e.nome_empresa AS NomeEmpresa, p.status AS Status,
+                   p.horario_pedido AS HorarioPedido
+            FROM pedidos p
+            JOIN empresas_convenio e ON e.id = p.empresa_id
+            WHERE p.tipo = 'convenio' AND p.data_pedido = CURDATE()
+            """;
+        if (!string.IsNullOrEmpty(statusFiltro))
+            sql += " AND p.status = @StatusFiltro";
+        sql += " ORDER BY p.horario_pedido";
+
+        var pedidos = (await conn.QueryAsync<PedidoConvenio>(sql, new { StatusFiltro = statusFiltro })).ToList();
+        if (pedidos.Count == 0) return pedidos;
+
+        var ids = pedidos.Select(p => p.Id).ToArray();
+        var itens = (await conn.QueryAsync<(int PedidoId, string Nome, string Prato, string Tamanho, string? Acomp1, string? Acomp2, decimal Preco)>("""
+            SELECT pedido_id AS PedidoId, nome_pessoa AS Nome, mistura AS Prato,
+                   tamanho AS Tamanho, acomp_1 AS Acomp1, acomp_2 AS Acomp2,
+                   COALESCE(valor_unitario, 0) AS Preco
+            FROM itens_pedido WHERE pedido_id IN @Ids ORDER BY id
+            """, new { Ids = ids })).ToList();
+
+        var itensPorPedido = itens.GroupBy(i => i.PedidoId)
+            .ToDictionary(g => g.Key, g => g.Select(i =>
+                new ItemPedidoDto(0, i.Nome, i.Prato, i.Tamanho, i.Acomp1, i.Acomp2, i.Preco)).ToList());
+
+        foreach (var p in pedidos)
+            p.Itens = itensPorPedido.GetValueOrDefault(p.Id, []);
+
+        return pedidos;
+    }
+
     public async Task AtualizarStatusConvenioAsync(int pedidoId, string novoStatus)
     {
         using var conn = db.Create();

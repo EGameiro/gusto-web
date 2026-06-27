@@ -10,18 +10,20 @@ namespace GustoConvenio.Web.Pages.Admin.PedidosWhatsApp;
 [Authorize(Policy = "Admin")]
 public class IndexModel(IPedidoRepository repo, TenantService tenant) : PageModel
 {
-    public List<PedidoWhatsApp> Pedidos    { get; set; } = [];
+    public List<PedidoWhatsApp>  PedidosWhatsApp { get; set; } = [];
+    public List<PedidoConvenio>  PedidosConvenio { get; set; } = [];
     public int  EmPreparo  { get; set; }
     public int  Saiu       { get; set; }
     public int  Entregues  { get; set; }
     public string? StatusAtivo { get; set; }
 
-    private static readonly string[] StatusValidos = ["preparo", "saiu", "entregue"];
+    private static readonly string[] StatusValidos = ["preparo", "saiu", "entregue", "pendente"];
 
     public async Task OnGetAsync(string? status = null)
     {
-        StatusAtivo = StatusValidos.Contains(status) ? status : null;
-        Pedidos     = await repo.ListarWhatsAppHojeAsync(tenant.RestauranteId, StatusAtivo);
+        StatusAtivo     = StatusValidos.Contains(status) ? status : null;
+        PedidosWhatsApp = await repo.ListarWhatsAppHojeAsync(tenant.RestauranteId, StatusAtivo);
+        PedidosConvenio = await repo.ListarConvenioHojeAsync(StatusAtivo);
         (EmPreparo, Saiu, Entregues) = await repo.TotaisWhatsAppHojeAsync(tenant.RestauranteId);
     }
 
@@ -29,13 +31,30 @@ public class IndexModel(IPedidoRepository repo, TenantService tenant) : PageMode
     {
         var novoStatus = statusAtual switch
         {
-            "preparo" => "saiu",
-            "saiu"    => "entregue",
-            _         => null
+            "pendente" => "preparo",
+            "preparo"  => "saiu",
+            "saiu"     => "entregue",
+            _          => null
         };
 
         if (novoStatus is not null)
             await repo.AtualizarStatusWhatsAppAsync(pedidoId, novoStatus);
+
+        return RedirectToPage(new { status = filtro });
+    }
+
+    public async Task<IActionResult> OnPostAvancarStatusConvenioAsync(int pedidoId, string statusAtual, string? filtro)
+    {
+        var novoStatus = statusAtual switch
+        {
+            "pendente" => "preparo",
+            "preparo"  => "saiu",
+            "saiu"     => "entregue",
+            _          => null
+        };
+
+        if (novoStatus is not null)
+            await repo.AtualizarStatusConvenioAsync(pedidoId, novoStatus);
 
         return RedirectToPage(new { status = filtro });
     }

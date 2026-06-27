@@ -1,39 +1,34 @@
 @page
 @model GustoConvenio.Web.Pages.Admin.PedidosWhatsApp.IndexModel
 @{
-    ViewData["Title"] = "Pedidos WhatsApp";
+    ViewData["Title"] = "Pedidos do dia";
 
     string BadgeCls(string s) => s switch {
         "preparo"  => "badge-blue",
         "saiu"     => "badge-amber",
         "entregue" => "badge-green",
-        "pendente" => "badge-blue",
+        "pendente" => "badge-gray",
         _          => "badge-gray"
     };
     string BadgeTxt(string s) => s switch {
         "preparo"  => "Em preparo",
         "saiu"     => "Saiu p/ entrega",
         "entregue" => "Entregue",
-        "pendente" => "Em preparo",
+        "pendente" => "Pendente",
         _          => s
     };
     string ProxBtnTxt(string s) => s switch {
-        "preparo"  => "Saiu p/ entrega",
-        "saiu"     => "Entregue",
-        "pendente" => "Saiu p/ entrega",
+        "pendente" => "▶ Em preparo",
+        "preparo"  => "🛵 Saiu p/ entrega",
+        "saiu"     => "✓ Entregue",
         _          => ""
     };
 }
 
 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
     <div>
-        <div class="page-title">Pedidos WhatsApp</div>
+        <div class="page-title">Pedidos do dia</div>
         <div class="page-sub">@DateTime.Today.ToString("dddd, dd/MM/yyyy")</div>
-    </div>
-    <div style="display:flex; gap:8px; align-items:center;">
-        <span class="badge badge-green" style="font-size:12px; padding:5px 12px;">
-            &#9679; Agente ativo
-        </span>
     </div>
 </div>
 
@@ -53,75 +48,134 @@
 </div>
 
 <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
-    <a href="?" class="btn @(Model.StatusAtivo == null ? "btn-primary" : "")">Todos</a>
-    <a href="?status=preparo" class="btn @(Model.StatusAtivo == "preparo" ? "btn-primary" : "")">Em preparo</a>
-    <a href="?status=saiu"    class="btn @(Model.StatusAtivo == "saiu"    ? "btn-primary" : "")">Saiu p/ entrega</a>
+    <a href="?"               class="btn @(Model.StatusAtivo == null        ? "btn-primary" : "")">Todos</a>
+    <a href="?status=pendente" class="btn @(Model.StatusAtivo == "pendente" ? "btn-primary" : "")">Pendente</a>
+    <a href="?status=preparo" class="btn @(Model.StatusAtivo == "preparo"   ? "btn-primary" : "")">Em preparo</a>
+    <a href="?status=saiu"    class="btn @(Model.StatusAtivo == "saiu"      ? "btn-primary" : "")">Saiu p/ entrega</a>
     <a href="?status=entregue" class="btn @(Model.StatusAtivo == "entregue" ? "btn-primary" : "")">Entregues</a>
 </div>
 
-@if (!Model.Pedidos.Any())
+@{
+    var totalPedidos = Model.PedidosWhatsApp.Count + Model.PedidosConvenio.Count;
+}
+
+@if (totalPedidos == 0)
 {
     <div style="text-align:center; color:#888; padding:40px;">
         Nenhum pedido encontrado.
     </div>
 }
-else
-{
-    foreach (var p in Model.Pedidos)
-    {
-        var isEntregue = p.Status == "entregue";
-        var tipoEntrega = !string.IsNullOrEmpty(p.EnderecoEntrega)
-            ? $"Entrega — {p.EnderecoEntrega}"
-            : !string.IsNullOrEmpty(p.HoraRetirada)
-                ? $"Retirada às {p.HoraRetirada}"
-                : "Tipo não informado";
 
-        <div class="form-card" style="margin-bottom:10px; @(isEntregue ? "opacity:0.6;" : "")">
-            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
-                <div style="display:flex; gap:12px; align-items:flex-start; flex:1;">
-                    <div style="width:40px; height:40px; border-radius:50%; background:#e8f0fe;
-                                display:flex; align-items:center; justify-content:center;
-                                font-size:13px; font-weight:600; color:#1d6fa5; flex-shrink:0;">
-                        @(p.NomeCliente.Length >= 2 ? p.NomeCliente.Substring(0,2).ToUpper() : "??")
-                    </div>
-                    <div style="flex:1;">
-                        <div style="font-weight:600; font-size:15px;">@p.NomeCliente</div>
-                        <div style="font-size:13px; color:#666; margin:2px 0 6px;">
-                            &#128337; @p.HorarioPedido.ToString(@"hh\:mm")
-                            &nbsp;&middot;&nbsp;
-                            &#128205; @tipoEntrega
-                        </div>
-                        @foreach (var item in p.Itens)
-                        {
-                            var acomps = new[] { item.Acomp1, item.Acomp2 }.Where(a => !string.IsNullOrEmpty(a));
-                            <div style="font-size:13px; margin-bottom:2px;">
-                                <strong>@item.Mistura</strong> — @item.Tamanho
-                                @if (acomps.Any())
-                                {
-                                    <span style="color:#666;"> &nbsp;&middot;&nbsp; @string.Join(" + ", acomps)</span>
-                                }
-                                @if (!string.IsNullOrEmpty(item.Observacoes))
-                                {
-                                    <span style="color:#888; font-size:12px;"> &nbsp;(Obs: @item.Observacoes)</span>
-                                }
-                            </div>
-                        }
-                    </div>
+@* ── Pedidos WhatsApp ── *@
+@foreach (var p in Model.PedidosWhatsApp)
+{
+    var isEntregue = p.Status == "entregue";
+    var tipoEntrega = !string.IsNullOrEmpty(p.EnderecoEntrega)
+        ? $"Entrega — {p.EnderecoEntrega}"
+        : !string.IsNullOrEmpty(p.HoraRetirada)
+            ? $"Retirada às {p.HoraRetirada}"
+            : "Tipo não informado";
+
+    <div class="form-card" style="margin-bottom:10px; @(isEntregue ? "opacity:0.6;" : "")">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+            <div style="display:flex; gap:12px; align-items:flex-start; flex:1;">
+                <div style="width:40px; height:40px; border-radius:50%; background:#e8f0fe;
+                            display:flex; align-items:center; justify-content:center;
+                            font-size:13px; font-weight:600; color:#1d6fa5; flex-shrink:0;">
+                    @(p.NomeCliente.Length >= 2 ? p.NomeCliente.Substring(0,2).ToUpper() : "??")
                 </div>
-                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0;">
-                    <span class="badge @BadgeCls(p.Status)">@BadgeTxt(p.Status)</span>
-                    <div style="font-size:15px; font-weight:600;">R$ @p.ValorTotal.ToString("N2")</div>
-                    @if (!isEntregue)
+                <div style="flex:1;">
+                    <div style="font-weight:600; font-size:15px;">
+                        @p.NomeCliente
+                        <span style="font-size:11px; font-weight:400; color:#888; margin-left:6px; background:#f0f0f0; padding:2px 6px; border-radius:4px;">WhatsApp</span>
+                    </div>
+                    <div style="font-size:13px; color:#666; margin:2px 0 6px;">
+                        &#128337; @p.HorarioPedido.ToString(@"hh\:mm")
+                        &nbsp;&middot;&nbsp;
+                        &#128205; @tipoEntrega
+                    </div>
+                    @foreach (var item in p.Itens)
                     {
-                        <form method="post" asp-page-handler="AvancarStatus">
-                            <input type="hidden" name="pedidoId"    value="@p.Id" />
-                            <input type="hidden" name="statusAtual" value="@p.Status" />
-                            <input type="hidden" name="filtro"      value="@Model.StatusAtivo" />
-                            <button type="submit" class="btn btn-sm">@ProxBtnTxt(p.Status)</button>
-                        </form>
+                        var acomps = new[] { item.Acomp1, item.Acomp2 }.Where(a => !string.IsNullOrEmpty(a));
+                        <div style="font-size:13px; margin-bottom:2px;">
+                            <strong>@item.Mistura</strong> — @item.Tamanho
+                            @if (acomps.Any())
+                            {
+                                <span style="color:#666;"> &nbsp;&middot;&nbsp; @string.Join(" + ", acomps)</span>
+                            }
+                            @if (!string.IsNullOrEmpty(item.Observacoes))
+                            {
+                                <span style="color:#888; font-size:12px;"> &nbsp;(Obs: @item.Observacoes)</span>
+                            }
+                        </div>
                     }
                 </div>
             </div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0;">
+                <span class="badge @BadgeCls(p.Status)">@BadgeTxt(p.Status)</span>
+                <div style="font-size:15px; font-weight:600;">R$ @p.ValorTotal.ToString("N2")</div>
+                @if (!isEntregue)
+                {
+                    <form method="post" asp-page-handler="AvancarStatus">
+                        <input type="hidden" name="pedidoId"    value="@p.Id" />
+                        <input type="hidden" name="statusAtual" value="@p.Status" />
+                        <input type="hidden" name="filtro"      value="@Model.StatusAtivo" />
+                        <button type="submit" class="btn btn-sm">@ProxBtnTxt(p.Status)</button>
+                    </form>
+                }
+            </div>
         </div>
-    }
+    </div>
+}
+
+@* ── Pedidos Convênio ── *@
+@foreach (var p in Model.PedidosConvenio)
+{
+    var isEntregue = p.Status == "entregue";
+
+    <div class="form-card" style="margin-bottom:10px; border-left:3px solid #e8a020; @(isEntregue ? "opacity:0.6;" : "")">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+            <div style="display:flex; gap:12px; align-items:flex-start; flex:1;">
+                <div style="width:40px; height:40px; border-radius:50%; background:#fff3e0;
+                            display:flex; align-items:center; justify-content:center;
+                            font-size:13px; font-weight:600; color:#e8a020; flex-shrink:0;">
+                    🏢
+                </div>
+                <div style="flex:1;">
+                    <div style="font-weight:600; font-size:15px;">
+                        @p.NomeEmpresa
+                        <span style="font-size:11px; font-weight:400; color:#888; margin-left:6px; background:#fff3e0; padding:2px 6px; border-radius:4px;">Convênio</span>
+                    </div>
+                    <div style="font-size:13px; color:#666; margin:2px 0 6px;">
+                        &#128337; @p.HorarioPedido.ToString(@"hh\:mm")
+                        &nbsp;&middot;&nbsp; @p.Itens.Count marmita(s)
+                    </div>
+                    @foreach (var item in p.Itens)
+                    {
+                        var acomps = new[] { item.Acomp1, item.Acomp2 }.Where(a => !string.IsNullOrEmpty(a));
+                        <div style="font-size:13px; margin-bottom:2px;">
+                            <strong>@item.Nome</strong> — @item.Prato @item.Tamanho
+                            @if (acomps.Any())
+                            {
+                                <span style="color:#666;"> &nbsp;&middot;&nbsp; @string.Join(" + ", acomps)</span>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0;">
+                <span class="badge @BadgeCls(p.Status)">@BadgeTxt(p.Status)</span>
+                <div style="font-size:15px; font-weight:600;">R$ @p.ValorTotal.ToString("N2")</div>
+                @if (!isEntregue)
+                {
+                    <form method="post" asp-page-handler="AvancarStatusConvenio">
+                        <input type="hidden" name="pedidoId"    value="@p.Id" />
+                        <input type="hidden" name="statusAtual" value="@p.Status" />
+                        <input type="hidden" name="filtro"      value="@Model.StatusAtivo" />
+                        <button type="submit" class="btn btn-sm">@ProxBtnTxt(p.Status)</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
 }
