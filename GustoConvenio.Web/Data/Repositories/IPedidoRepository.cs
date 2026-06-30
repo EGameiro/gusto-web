@@ -25,6 +25,7 @@ public interface IPedidoRepository
 
     // Pedidos convênio
     Task<List<PedidoConvenio>> ListarConvenioHojeAsync(string? statusFiltro = null);
+    Task<List<(DateTime Dia, decimal TotalConvenio, decimal TotalWhatsApp)>> ResumoSemanaAsync();
 
     // Pedidos WhatsApp (individuais)
     Task<List<PedidoWhatsApp>> ListarWhatsAppHojeAsync(int restauranteId, string? statusFiltro = null);

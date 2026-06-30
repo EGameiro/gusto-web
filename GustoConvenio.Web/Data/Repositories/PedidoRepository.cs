@@ -214,6 +214,29 @@ public class PedidoRepository(DbConnectionFactory db) : IPedidoRepository
         return pedidos;
     }
 
+    public async Task<List<(DateTime Dia, decimal TotalConvenio, decimal TotalWhatsApp)>> ResumoSemanaAsync()
+    {
+        using var conn = db.Create();
+        var rows = await conn.QueryAsync("""
+            SELECT
+                p.data_pedido                                   AS Dia,
+                SUM(CASE WHEN p.tipo = 'convenio'   THEN COALESCE(i.valor_unitario, 0) ELSE 0 END) AS TotalConvenio,
+                SUM(CASE WHEN p.tipo = 'individual' THEN COALESCE(i.valor_unitario, 0) ELSE 0 END) AS TotalWhatsApp
+            FROM pedidos p
+            LEFT JOIN itens_pedido i ON i.pedido_id = p.id
+            WHERE p.data_pedido >= CURDATE() - INTERVAL 6 DAY
+              AND p.status != 'cancelado'
+            GROUP BY p.data_pedido
+            ORDER BY p.data_pedido
+            """);
+
+        return rows.Select(r => (
+            Dia:           (DateTime)r.Dia,
+            TotalConvenio: (decimal)r.TotalConvenio,
+            TotalWhatsApp: (decimal)r.TotalWhatsApp
+        )).ToList();
+    }
+
     public async Task<List<PedidoConvenio>> ListarConvenioHojeAsync(string? statusFiltro = null)
     {
         using var conn = db.Create();

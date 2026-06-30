@@ -1,0 +1,75 @@
+@page
+@model GustoConvenio.Web.Pages.Admin.ResumoSemana.IndexModel
+@{
+    ViewData["Title"] = "Resumo da semana";
+}
+
+<div class="page-title">Resumo da semana</div>
+<div class="page-sub">Últimos 7 dias — faturamento por dia</div>
+
+<div class="stat-row" style="margin-bottom:24px;">
+    <div class="stat-card">
+        <div class="stat-val" style="color:#15803d;">R$ @Model.TotalGeral.ToString("N2")</div>
+        <div class="stat-lbl">Total da semana</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-val" style="color:#e8a020;">R$ @Model.TotalConvenio.ToString("N2")</div>
+        <div class="stat-lbl">Convênios</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-val" style="color:#1d6fa5;">R$ @Model.TotalWhatsApp.ToString("N2")</div>
+        <div class="stat-lbl">WhatsApp</div>
+    </div>
+</div>
+
+@if (!Model.Dias.Any())
+{
+    <div style="text-align:center; color:#888; padding:40px;">
+        Nenhum pedido encontrado nos últimos 7 dias.
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Dia</th>
+                    <th style="text-align:right;">Convênio</th>
+                    <th style="text-align:right;">WhatsApp</th>
+                    <th style="text-align:right;">Total do dia</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in Model.Dias)
+                {
+                    var totalDia = d.TotalConvenio + d.TotalWhatsApp;
+                    var isHoje   = d.Dia.Date == DateTime.Today;
+                    <tr style="@(isHoje ? "font-weight:600; background:#f0f9ff;" : "")">
+                        <td>
+                            @d.Dia.ToString("ddd, dd/MM")
+                            @if (isHoje) { <span style="font-size:11px; color:#1d6fa5; margin-left:6px;">hoje</span> }
+                        </td>
+                        <td style="text-align:right;">
+                            @(d.TotalConvenio > 0 ? "R$ " + d.TotalConvenio.ToString("N2") : "—")
+                        </td>
+                        <td style="text-align:right;">
+                            @(d.TotalWhatsApp > 0 ? "R$ " + d.TotalWhatsApp.ToString("N2") : "—")
+                        </td>
+                        <td style="text-align:right; color:#15803d;">
+                            R$ @totalDia.ToString("N2")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr style="font-weight:700; background:#f7f7f7;">
+                    <td>Total</td>
+                    <td style="text-align:right;">R$ @Model.TotalConvenio.ToString("N2")</td>
+                    <td style="text-align:right;">R$ @Model.TotalWhatsApp.ToString("N2")</td>
+                    <td style="text-align:right; color:#15803d;">R$ @Model.TotalGeral.ToString("N2")</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+}
