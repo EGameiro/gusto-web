@@ -2,6 +2,11 @@
 @model GustoConvenio.Web.Pages.Admin.ResumoSemana.IndexModel
 @{
     ViewData["Title"] = "Resumo da semana";
+    var ptBR = new System.Globalization.CultureInfo("pt-BR");
+    var labels    = string.Join(",", Model.Dias.Select(d => $"\"{d.Dia.ToString("ddd dd/MM", ptBR)}\""));
+    var totais    = string.Join(",", Model.Dias.Select(d => (d.TotalConvenio + d.TotalWhatsApp).ToString("F2", System.Globalization.CultureInfo.InvariantCulture)));
+    var convenios = string.Join(",", Model.Dias.Select(d => d.TotalConvenio.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)));
+    var whatsapps = string.Join(",", Model.Dias.Select(d => d.TotalWhatsApp.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)));
 }
 
 <div class="page-title">Resumo da semana</div>
@@ -47,7 +52,7 @@ else
                     var isHoje   = d.Dia.Date == DateTime.Today;
                     <tr style="@(isHoje ? "font-weight:600; background:#f0f9ff;" : "")">
                         <td>
-                            @d.Dia.ToString("ddd, dd/MM", new System.Globalization.CultureInfo("pt-BR"))
+                            @d.Dia.ToString("ddd, dd/MM", ptBR)
                             @if (isHoje) { <span style="font-size:11px; color:#1d6fa5; margin-left:6px;">hoje</span> }
                         </td>
                         <td style="text-align:right;">
@@ -72,4 +77,77 @@ else
             </tfoot>
         </table>
     </div>
+
+    <!-- Gráfico -->
+    <div style="background:#fff; border:1px solid #e8e8e8; border-radius:10px; padding:20px; margin-top:20px;">
+        <div style="font-size:13px; font-weight:600; color:#555; margin-bottom:12px;">Evolução do faturamento</div>
+        <canvas id="grafico" height="80"></canvas>
+    </div>
+}
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const ctx = document.getElementById('grafico').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: [@Html.Raw(labels)],
+        datasets: [
+            {
+                label: 'Total',
+                data: [@Html.Raw(totais)],
+                borderColor: '#15803d',
+                backgroundColor: 'rgba(21,128,61,0.08)',
+                borderWidth: 2,
+                pointRadius: 4,
+                pointBackgroundColor: '#15803d',
+                fill: true,
+                tension: 0.3
+            },
+            {
+                label: 'Convênio',
+                data: [@Html.Raw(convenios)],
+                borderColor: '#e8a020',
+                backgroundColor: 'transparent',
+                borderWidth: 2,
+                pointRadius: 3,
+                pointBackgroundColor: '#e8a020',
+                fill: false,
+                tension: 0.3
+            },
+            {
+                label: 'WhatsApp',
+                data: [@Html.Raw(whatsapps)],
+                borderColor: '#1d6fa5',
+                backgroundColor: 'transparent',
+                borderWidth: 2,
+                pointRadius: 3,
+                pointBackgroundColor: '#1d6fa5',
+                fill: false,
+                tension: 0.3
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom', labels: { font: { size: 12 } } },
+            tooltip: {
+                callbacks: {
+                    label: ctx => 'R$ ' + ctx.parsed.y.toFixed(2).replace('.', ',')
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: val => 'R$ ' + val.toFixed(0)
+                }
+            }
+        }
+    }
+});
+</script>
 }
