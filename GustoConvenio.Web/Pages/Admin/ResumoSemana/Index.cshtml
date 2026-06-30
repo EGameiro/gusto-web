@@ -47,7 +47,7 @@ else
                     var isHoje   = d.Dia.Date == DateTime.Today;
                     <tr style="@(isHoje ? "font-weight:600; background:#f0f9ff;" : "")">
                         <td>
-                            @d.Dia.ToString("ddd, dd/MM")
+                            @d.Dia.ToString("ddd, dd/MM", new System.Globalization.CultureInfo("pt-BR"))
                             @if (isHoje) { <span style="font-size:11px; color:#1d6fa5; margin-left:6px;">hoje</span> }
                         </td>
                         <td style="text-align:right;">
